@@ -1,43 +1,12 @@
-{
-  "recommendations": [
-    {
-      "name": "电化转债",
-      "code": "127109",
-      "price": 100.00,
-      "price_change": "0.00%",
-      "volatility": "10.10%",
-      "pe": 14.87,
-      "pe_percentile": "32.08%",
-      "pb": 3.07,
-      "estimated_annual_return": "5.20%",
-      "rating": "AA",
-      "remaining_years": 4.87
-    },
-    {
-      "name": "川恒转债",
-      "code": "127043",
-      "price": 128.67,
-      "price_change": "-0.56%",
-      "volatility": "17.41%",
-      "pe": 22.84,
-      "pe_percentile": "1.92%",
-      "pb": 1.97,
-      "estimated_annual_return": "7.80%",
-      "rating": "AA-",
-      "remaining_years": 2.23
-    },
-    {
-      "name": "华亚转债",
-      "code": "127079",
-      "price": 139.05,
-      "price_change": "2.85%",
-      "volatility": "30.71%",
-      "pe": 43.28,
-      "pe_percentile": "1.33%",
-      "pb": 3.24,
-      "estimated_annual_return": "10.00%",
-      "rating": "A+",
-      "remaining_years": 3.48
-    }
-  ]
-}
+[
+  {
+    "name": "电化转债",
+    "code": "127109",
+    "volatility": "3.07",
+    "pe": "10.10",
+    "pe_percentile": "32.08%",
+    "pb": "1.23",
+    "annual_return": "2.36%"
+  }
+  // ...其他标的数据
+]
