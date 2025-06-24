@@ -1,0 +1,109 @@
+---
+---
+
+@import "variables";
+
+body {
+  /* 基础样式 */
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+header {
+  background: linear-gradient(135deg, #1e5799 0%,#207cca 100%);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  color: rgba(255,255,255,0.8);
+  margin-left: 1.5rem;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: all 0.3s;
+}
+
+nav a.active, nav a:hover {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+/* 标的卡片样式 */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.target-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 20px;
+  transition: transform 0.3s;
+}
+
+.target-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.target-card h3 {
+  margin-top: 0;
+  color: #1e5799;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.metrics span {
+  display: inline-block;
+  background: #eef5ff;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.buy-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 10px;
+  transition: background 0.3s;
+}
+
+.buy-btn:hover {
+  background: #388E3C;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  nav {
+    margin-top: 1rem;
+  }
+  
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}

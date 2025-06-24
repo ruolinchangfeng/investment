@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} | {{ site.title }}</title>
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <header>
+    <h1>{{ site.title }}</h1>
+    <nav>
+      <a href="{{ '/' | relative_url }}" class="{% if page.url == '/' %}active{% endif %}">推荐标的</a>
+      <a href="{{ '/transactions/' | relative_url }}" class="{% if page.url contains '/transactions/' %}active{% endif %}">交易记录</a>
+      <a href="{{ '/strategies/' | relative_url }}" class="{% if page.url contains '/strategies/' %}active{% endif %}">策略配置</a>
+    </nav>
+  </header>
+
+  <main>
+    {{ content }}
+  </main>
+
+  <footer>
+    <p>© {{ site.time | date: '%Y' }} 网格交易助手 | 数据仅供参考，投资有风险</p>
+  </footer>
+</body>
+</html>

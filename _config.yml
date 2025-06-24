@@ -1,0 +1,8 @@
+title: 智能网格交易助手
+description: 基于Jekyll的网格交易网站
+baseurl: "/grid-trading-website"
+url: "https://yourusername.github.io"
+markdown: kramdown
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
