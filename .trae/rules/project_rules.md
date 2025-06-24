@@ -1,0 +1,1 @@
+一键部署到github pages，就是让你将git目录下所有文件add，然后commit，然后push。
