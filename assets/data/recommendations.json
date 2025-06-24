@@ -16,10 +16,6 @@
   {
     "name": "电化转债",
     "code": "127109",
-    "volatility": "3.07",
-    "pe": "10.10",
-    "pe_percentile": "32.08%",
-    "pb": "1.23",
-    "annual_return": "2.36%"
+    "volatility": "3.07"
   }
 ]
