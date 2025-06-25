@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <style>
         :root {
             --primary-color: #2c6fbb;
@@ -31,7 +32,7 @@
             color: white;
             border-radius: 15px;
             padding: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
@@ -67,9 +68,19 @@
             z-index: 1;
         }
         
-        .header p {
+        .strategy-intro {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
             position: relative;
             z-index: 1;
+        }
+        
+        .strategy-intro p {
+            margin-bottom: 8px;
+            color: #e0e9ff;
         }
         
         .card {
@@ -157,19 +168,20 @@
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
-            width: 300px;
-            height: 180px;
+            width: 600px;
+            height: 360px;
             background: white;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             z-index: 100;
-            padding: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
         
         .chart-tooltip canvas {
-            width: 100%;
-            height: 100%;
+            width: 100% !important;
+            height: 100% !important;
         }
         
         .kpi-card {
@@ -325,23 +337,64 @@
             color: var(--danger-color);
         }
         
-        .tag-container {
+        .range-slider-container {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 15px;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            padding: 0 10px;
         }
         
-        .tag {
-            display: inline-block;
-            background: linear-gradient(to right, #e9f0ff, #d6e4ff);
-            color: var(--primary-color);
-            padding: 6px 14px;
-            border-radius: 20px;
+        .range-slider {
+            flex: 1;
+            height: 5px;
+            background: #e0e6ed;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .range-slider .track {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 5px;
+        }
+        
+        .range-slider .handle {
+            position: absolute;
+            top: 50%;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 2;
+        }
+        
+        .range-values {
+            display: flex;
+            justify-content: space-between;
             font-size: 0.85rem;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .date-range-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .date-range-controls .btn {
+            padding: 5px 10px;
+            font-size: 0.85rem;
         }
         
         @media (max-width: 992px) {
@@ -383,10 +436,15 @@
             }
             
             .chart-tooltip {
-                width: 260px;
-                height: 150px;
+                width: 300px;
+                height: 180px;
                 left: 0;
                 transform: translateX(0);
+            }
+            
+            .date-range-controls {
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
@@ -397,49 +455,37 @@
         <div class="header text-center">
             <h1><i class="fas fa-chart-network me-2"></i>网格交易平台</h1>
             <p class="mb-0">智能网格交易工具，助您实现稳定收益</p>
+            
+            <div class="strategy-intro text-start">
+                <p class="mb-1">网格交易是一种在价格波动中获取收益的交易策略，特别适合波动性较高的投资品种。</p>
+                <p class="mb-1">策略优势：机械化操作避免情绪干扰，震荡行情中持续获取收益，风险可控收益稳定。</p>
+                <p class="mb-0">注意事项：选择高波动性标的，设置合理价格区间，控制单网格交易金额，避免单边行情亏损。</p>
+            </div>
         </div>
         
         <!-- 关键指标卡片 -->
         <div class="row mb-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card kpi-card">
                     <div class="kpi-title">平台标的数量</div>
                     <div class="kpi-value">48</div>
                     <div><span class="positive">+8%</span> 本月新增</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card kpi-card">
                     <div class="kpi-title">平均年化收益</div>
                     <div class="kpi-value">9.2%</div>
                     <div><span class="positive">+0.8%</span> 较上月</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card kpi-card">
                     <div class="kpi-title">平均波动率</div>
                     <div class="kpi-value">18.7%</div>
                     <div><span class="negative">-1.2%</span> 较上月</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card kpi-card">
-                    <div class="kpi-title">网格策略数</div>
-                    <div class="kpi-value">1,428</div>
-                    <div><span class="positive">+15%</span> 本月新增</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 标签分类 -->
-        <div class="tag-container">
-            <span class="tag">银行转债</span>
-            <span class="tag">高波动率</span>
-            <span class="tag">低溢价率</span>
-            <span class="tag">短期到期</span>
-            <span class="tag">AAA评级</span>
-            <span class="tag">高收益率</span>
-            <span class="tag">科技板块</span>
         </div>
         
         <!-- 数据表格 -->
@@ -459,100 +505,13 @@
                             <th id="volatility-header">波动率 <span class="sort-indicator"><i class="fas fa-sort"></i></span></th>
                             <th id="valuation-header">估值水平 <span class="sort-indicator"><i class="fas fa-sort"></i></span></th>
                             <th>预估年化收益</th>
-                            <th>当日K线</th>
+                            <th>日K线</th>
                         </tr>
                     </thead>
                     <tbody id="bonds-table-body">
                         <!-- 数据由JavaScript动态生成 -->
                     </tbody>
                 </table>
-            </div>
-        </div>
-        
-        <!-- 网格策略说明 -->
-        <div class="row mt-4">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">网格交易策略说明</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="lead">网格交易是一种在价格波动中获取收益的交易策略，特别适合波动性较高的投资品种。</p>
-                        <div class="row mt-4">
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-start mb-4">
-                                    <div class="bg-success p-3 rounded-circle me-3">
-                                        <i class="fas fa-lightbulb fa-lg text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="mb-2">策略优势</h5>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle text-success me-2"></i>机械化操作，避免情绪干扰</li>
-                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle text-success me-2"></i>震荡行情中持续获取收益</li>
-                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle text-success me-2"></i>无需预测市场方向</li>
-                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle text-success me-2"></i>风险可控，收益稳定</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-start mb-4">
-                                    <div class="bg-warning p-3 rounded-circle me-3">
-                                        <i class="fas fa-exclamation-triangle fa-lg text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="mb-2">注意事项</h5>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-exclamation text-warning me-2"></i>选择高波动性标的</li>
-                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-exclamation text-warning me-2"></i>设置合理的价格区间</li>
-                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-exclamation text-warning me-2"></i>控制单网格交易金额</li>
-                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-exclamation text-warning me-2"></i>避免单边行情中的持续亏损</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0">最佳网格标的特征</h5>
-                    </div>
-                    <div class="card-body d-flex flex-column">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="bg-success p-3 rounded-circle me-3">
-                                <i class="fas fa-chart-line fa-lg text-white"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-0">高波动性</h6>
-                                <p class="mb-0">月波动率 > 15%</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="bg-primary p-3 rounded-circle me-3">
-                                <i class="fas fa-percent fa-lg text-white"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-0">合理溢价率</h6>
-                                <p class="mb-0">溢价率 < 30%</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="bg-info p-3 rounded-circle me-3">
-                                <i class="fas fa-coins fa-lg text-white"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-0">适中剩余规模</h6>
-                                <p class="mb-0">5-20亿</p>
-                            </div>
-                        </div>
-                        <div class="mt-auto text-center">
-                            <button class="btn btn-primary w-100"><i class="fas fa-plus-circle me-2"></i>创建网格策略</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         
@@ -666,10 +625,23 @@
             return data;
         }
         
+        // 创建日期标签
+        function generateDateLabels(count) {
+            const today = new Date();
+            const labels = [];
+            for (let i = count - 1; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(today.getDate() - i);
+                labels.push(date.toLocaleDateString('zh-CN', {month: '2-digit', day: '2-digit'}));
+            }
+            return labels;
+        }
+        
         // 创建迷你K线图
         function createMiniChart(canvasId, basePrice, volatility) {
             const ctx = document.getElementById(canvasId).getContext('2d');
             const data = generatePriceData(basePrice, volatility, 20);
+            const labels = generateDateLabels(20);
             
             // 计算图表需要的值
             const minVal = Math.min(...data);
@@ -679,7 +651,7 @@
             return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: data.map((_, i) => i),
+                    labels: labels,
                     datasets: [{
                         data: data,
                         borderColor: data[data.length-1] >= data[0] ? '#27ae60' : '#e74c3c',
@@ -716,16 +688,17 @@
         function createLargeChart(canvasId, basePrice, volatility, bondName) {
             const ctx = document.getElementById(canvasId).getContext('2d');
             const data = generatePriceData(basePrice, volatility, 30);
+            const labels = generateDateLabels(30);
             
             // 计算图表需要的值
             const minVal = Math.min(...data);
             const maxVal = Math.max(...data);
             const range = maxVal - minVal;
             
-            return new Chart(ctx, {
+            const chart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: data.map((_, i) => `T-${30-i}`),
+                    labels: labels,
                     datasets: [{
                         label: bondName + ' 价格走势',
                         data: data,
@@ -744,6 +717,21 @@
                         tooltip: {
                             mode: 'index',
                             intersect: false
+                        },
+                        zoom: {
+                            zoom: {
+                                wheel: {
+                                    enabled: true,
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'x',
+                            },
+                            pan: {
+                                enabled: true,
+                                mode: 'x',
+                            }
                         }
                     },
                     scales: {
@@ -763,6 +751,95 @@
                     }
                 }
             });
+            
+            return chart;
+        }
+        
+        // 创建自定义范围滑块
+        function createRangeSlider(min, max, container) {
+            const slider = document.createElement('div');
+            slider.className = 'range-slider';
+            slider.innerHTML = `
+                <div class="track"></div>
+                <div class="handle left-handle" style="left: 0%"></div>
+                <div class="handle right-handle" style="left: 100%"></div>
+                <div class="range-values">
+                    <span class="min-value">${min}</span>
+                    <span class="max-value">${max}</span>
+                </div>
+            `;
+            
+            container.appendChild(slider);
+            
+            const leftHandle = slider.querySelector('.left-handle');
+            const rightHandle = slider.querySelector('.right-handle');
+            const track = slider.querySelector('.track');
+            const minValue = slider.querySelector('.min-value');
+            const maxValue = slider.querySelector('.max-value');
+            
+            let leftPercent = 0;
+            let rightPercent = 100;
+            
+            function updateSlider() {
+                leftHandle.style.left = `${leftPercent}%`;
+                rightHandle.style.left = `${rightPercent}%`;
+                track.style.left = `${leftPercent}%`;
+                track.style.width = `${rightPercent - leftPercent}%`;
+                
+                minValue.textContent = Math.round(leftPercent) + '%';
+                maxValue.textContent = Math.round(rightPercent) + '%';
+            }
+            
+            function moveHandle(handle, percent) {
+                if (handle === leftHandle) {
+                    leftPercent = Math.min(percent, rightPercent - 5);
+                } else {
+                    rightPercent = Math.max(percent, leftPercent + 5);
+                }
+                updateSlider();
+            }
+            
+            function getPercent(e) {
+                const rect = slider.getBoundingClientRect();
+                return Math.min(100, Math.max(0, (e.clientX - rect.left) / rect.width * 100));
+            }
+            
+            leftHandle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                const onMove = (e) => moveHandle(leftHandle, getPercent(e));
+                const onUp = () => {
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                };
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            });
+            
+            rightHandle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                const onMove = (e) => moveHandle(rightHandle, getPercent(e));
+                const onUp = () => {
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                };
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            });
+            
+            updateSlider();
+            
+            return {
+                setRange: (min, max) => {
+                    leftPercent = min;
+                    rightPercent = max;
+                    updateSlider();
+                },
+                onRangeChange: (callback) => {
+                    slider.addEventListener('change', () => {
+                        callback(leftPercent, rightPercent);
+                    });
+                }
+            };
         }
         
         // 渲染债券表格
@@ -820,6 +897,13 @@
                         <div class="chart-container" data-id="${bond.id}">
                             <canvas id="chart-${bond.id}"></canvas>
                             <div class="chart-tooltip">
+                                <div class="date-range-controls">
+                                    <button class="btn btn-sm btn-outline-primary reset-zoom">重置视图</button>
+                                    <div class="range-slider-container">
+                                        <div class="range-slider" id="slider-${bond.id}"></div>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-secondary apply-range">应用范围</button>
+                                </div>
                                 <canvas id="tooltip-chart-${bond.id}"></canvas>
                             </div>
                         </div>
@@ -833,7 +917,28 @@
                     createMiniChart(`chart-${bond.id}`, bond.basePrice, bond.volatility);
                     
                     // 创建大图工具提示
-                    createLargeChart(`tooltip-chart-${bond.id}`, bond.basePrice, bond.volatility, bond.name);
+                    const chart = createLargeChart(`tooltip-chart-${bond.id}`, bond.basePrice, bond.volatility, bond.name);
+                    
+                    // 创建范围滑块
+                    const sliderContainer = document.querySelector(`#slider-${bond.id}`);
+                    const slider = createRangeSlider(0, 100, sliderContainer);
+                    
+                    // 重置视图按钮
+                    document.querySelector(`#slider-${bond.id}`).closest('.chart-tooltip').querySelector('.reset-zoom').addEventListener('click', () => {
+                        chart.resetZoom();
+                        slider.setRange(0, 100);
+                    });
+                    
+                    // 应用范围按钮
+                    document.querySelector(`#slider-${bond.id}`).closest('.chart-tooltip').querySelector('.apply-range').addEventListener('click', () => {
+                        const start = Math.max(0, Math.floor(chart.data.labels.length * slider.leftPercent / 100));
+                        const end = Math.min(chart.data.labels.length - 1, Math.ceil(chart.data.labels.length * slider.rightPercent / 100));
+                        
+                        // 设置新的显示范围
+                        chart.options.scales.x.min = chart.data.labels[start];
+                        chart.options.scales.x.max = chart.data.labels[end];
+                        chart.update();
+                    });
                 }, 100);
             });
         }
