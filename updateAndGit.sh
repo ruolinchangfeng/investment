@@ -1,4 +1,6 @@
-# 更新 data.json 文件（仅保留2条测试数据）
+#!/bin/bash
+
+# 更新data.json文件（精简数据并添加新字段）
 cat > data.json << 'EOF'
 [
   {
@@ -17,25 +19,9 @@ cat > data.json << 'EOF'
     "avgYield": 5.2,
     "basePrice": 105,
     "volatility": 1.5,
+    "undervaluationThreshold": 104.0,
+    "overvaluationThreshold": 107.0,
     "priceData": [
-      {"date": "06-01", "price": 105.2},
-      {"date": "06-02", "price": 105.5},
-      {"date": "06-03", "price": 104.8},
-      {"date": "06-04", "price": 105.7},
-      {"date": "06-05", "price": 106.1},
-      {"date": "06-06", "price": 105.9},
-      {"date": "06-07", "price": 106.3},
-      {"date": "06-08", "price": 105.6},
-      {"date": "06-09", "price": 104.9},
-      {"date": "06-10", "price": 105.3},
-      {"date": "06-11", "price": 106.0},
-      {"date": "06-12", "price": 106.5},
-      {"date": "06-13", "price": 106.2},
-      {"date": "06-14", "price": 105.8},
-      {"date": "06-15", "price": 106.1},
-      {"date": "06-16", "price": 106.7},
-      {"date": "06-17", "price": 107.0},
-      {"date": "06-18", "price": 106.8},
       {"date": "06-19", "price": 106.4},
       {"date": "06-20", "price": 106.9},
       {"date": "06-21", "price": 107.3},
@@ -61,25 +47,9 @@ cat > data.json << 'EOF'
     "avgYield": 6.1,
     "basePrice": 112,
     "volatility": 2.0,
+    "undervaluationThreshold": 113.0,
+    "overvaluationThreshold": 116.0,
     "priceData": [
-      {"date": "06-01", "price": 112.3},
-      {"date": "06-02", "price": 111.8},
-      {"date": "06-03", "price": 112.5},
-      {"date": "06-04", "price": 113.0},
-      {"date": "06-05", "price": 112.7},
-      {"date": "06-06", "price": 113.2},
-      {"date": "06-07", "price": 112.9},
-      {"date": "06-08", "price": 113.5},
-      {"date": "06-09", "price": 114.0},
-      {"date": "06-10", "price": 113.7},
-      {"date": "06-11", "price": 114.2},
-      {"date": "06-12", "price": 114.8},
-      {"date": "06-13", "price": 114.5},
-      {"date": "06-14", "price": 114.0},
-      {"date": "06-15", "price": 114.3},
-      {"date": "06-16", "price": 113.9},
-      {"date": "06-17", "price": 114.5},
-      {"date": "06-18", "price": 115.0},
       {"date": "06-19", "price": 115.5},
       {"date": "06-20", "price": 115.2},
       {"date": "06-21", "price": 115.8},
@@ -92,7 +62,7 @@ cat > data.json << 'EOF'
 ]
 EOF
 
-# 更新 index.html 文件
+# 更新index.html文件
 cat > index.html << 'EOF'
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -189,7 +159,8 @@ cat > index.html << 'EOF'
             overflow: hidden;
         }
         
-        .card:hover {
+        /* 修复免责声明移动问题 */
+        .card:hover:not(.footer) {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
         }
@@ -559,7 +530,7 @@ cat > index.html << 'EOF'
         }
         
         // 创建K线图
-        function createKlineChart(canvasId, priceData, bondName) {
+        function createKlineChart(canvasId, priceData, bondName, undervaluationThreshold, overvaluationThreshold) {
             const ctx = document.getElementById(canvasId).getContext('2d');
             const prices = priceData.map(item => item.price);
             const dates = priceData.map(item => item.date);
@@ -573,15 +544,39 @@ cat > index.html << 'EOF'
                 type: 'line',
                 data: {
                     labels: dates,
-                    datasets: [{
-                        label: bondName + ' 价格走势',
-                        data: prices,
-                        borderColor: prices[prices.length-1] >= prices[0] ? '#27ae60' : '#e74c3c',
-                        borderWidth: 2,
-                        pointRadius: 0,
-                        tension: 0.1,
-                        fill: false
-                    }]
+                    datasets: [
+                        // 价格走势
+                        {
+                            label: bondName + ' 价格走势',
+                            data: prices,
+                            borderColor: prices[prices.length-1] >= prices[0] ? '#27ae60' : '#e74c3c',
+                            borderWidth: 2,
+                            pointRadius: 0, // 默认不显示点
+                            pointHoverRadius: 5, // 悬停时显示点
+                            tension: 0.1,
+                            fill: false
+                        },
+                        // 低估临界线
+                        {
+                            label: '低估临界线',
+                            data: Array(prices.length).fill(undervaluationThreshold),
+                            borderColor: '#27ae60',
+                            borderWidth: 1,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        // 高估临界线
+                        {
+                            label: '高估临界线',
+                            data: Array(prices.length).fill(overvaluationThreshold),
+                            borderColor: '#e74c3c',
+                            borderWidth: 1,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -601,8 +596,8 @@ cat > index.html << 'EOF'
                             }
                         },
                         y: {
-                            min: minVal - range * 0.1,
-                            max: maxVal + range * 0.1,
+                            min: Math.min(minVal, undervaluationThreshold) - range * 0.1,
+                            max: Math.max(maxVal, overvaluationThreshold) + range * 0.1,
                             grid: {
                                 color: 'rgba(0, 0, 0, 0.05)'
                             }
@@ -688,7 +683,13 @@ cat > index.html << 'EOF'
                 
                 // 延迟渲染图表以确保canvas元素存在
                 setTimeout(() => {
-                    createKlineChart(`kline-${bond.id}`, bond.priceData, bond.name);
+                    createKlineChart(
+                        `kline-${bond.id}`, 
+                        bond.priceData, 
+                        bond.name,
+                        bond.undervaluationThreshold,
+                        bond.overvaluationThreshold
+                    );
                 }, 100);
             });
         }
@@ -813,4 +814,6 @@ cat > index.html << 'EOF'
 EOF
 
 # 提交更改
-git add . && git commit -m "精简数据并添加导出功能，修复排序图标对齐" && git push origin main
+git add .
+git commit -m "新增估值临界点并优化K线图，精简测试数据"
+git push origin main
