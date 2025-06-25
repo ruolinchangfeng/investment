@@ -1,3 +1,99 @@
+# 更新 data.json 文件（仅保留2条测试数据）
+cat > data.json << 'EOF'
+[
+  {
+    "id": 1,
+    "name": "浦发转债",
+    "code": "110059",
+    "rating": "AAA",
+    "dailyVol": 1.8,
+    "weeklyVol": 4.2,
+    "monthlyVol": 12.5,
+    "yearlyVol": 26.8,
+    "valuation": 35,
+    "valuationStatus": "low",
+    "valuationText": "估值偏低",
+    "yield": 6.8,
+    "avgYield": 5.2,
+    "basePrice": 105,
+    "volatility": 1.5,
+    "priceData": [
+      {"date": "06-01", "price": 105.2},
+      {"date": "06-02", "price": 105.5},
+      {"date": "06-03", "price": 104.8},
+      {"date": "06-04", "price": 105.7},
+      {"date": "06-05", "price": 106.1},
+      {"date": "06-06", "price": 105.9},
+      {"date": "06-07", "price": 106.3},
+      {"date": "06-08", "price": 105.6},
+      {"date": "06-09", "price": 104.9},
+      {"date": "06-10", "price": 105.3},
+      {"date": "06-11", "price": 106.0},
+      {"date": "06-12", "price": 106.5},
+      {"date": "06-13", "price": 106.2},
+      {"date": "06-14", "price": 105.8},
+      {"date": "06-15", "price": 106.1},
+      {"date": "06-16", "price": 106.7},
+      {"date": "06-17", "price": 107.0},
+      {"date": "06-18", "price": 106.8},
+      {"date": "06-19", "price": 106.4},
+      {"date": "06-20", "price": 106.9},
+      {"date": "06-21", "price": 107.3},
+      {"date": "06-22", "price": 107.1},
+      {"date": "06-23", "price": 106.7},
+      {"date": "06-24", "price": 107.0},
+      {"date": "06-25", "price": 107.5}
+    ]
+  },
+  {
+    "id": 2,
+    "name": "苏银转债",
+    "code": "110053",
+    "rating": "AAA",
+    "dailyVol": 2.5,
+    "weeklyVol": 6.1,
+    "monthlyVol": 18.2,
+    "yearlyVol": 34.7,
+    "valuation": 55,
+    "valuationStatus": "mid",
+    "valuationText": "估值合理",
+    "yield": 7.5,
+    "avgYield": 6.1,
+    "basePrice": 112,
+    "volatility": 2.0,
+    "priceData": [
+      {"date": "06-01", "price": 112.3},
+      {"date": "06-02", "price": 111.8},
+      {"date": "06-03", "price": 112.5},
+      {"date": "06-04", "price": 113.0},
+      {"date": "06-05", "price": 112.7},
+      {"date": "06-06", "price": 113.2},
+      {"date": "06-07", "price": 112.9},
+      {"date": "06-08", "price": 113.5},
+      {"date": "06-09", "price": 114.0},
+      {"date": "06-10", "price": 113.7},
+      {"date": "06-11", "price": 114.2},
+      {"date": "06-12", "price": 114.8},
+      {"date": "06-13", "price": 114.5},
+      {"date": "06-14", "price": 114.0},
+      {"date": "06-15", "price": 114.3},
+      {"date": "06-16", "price": 113.9},
+      {"date": "06-17", "price": 114.5},
+      {"date": "06-18", "price": 115.0},
+      {"date": "06-19", "price": 115.5},
+      {"date": "06-20", "price": 115.2},
+      {"date": "06-21", "price": 115.8},
+      {"date": "06-22", "price": 116.0},
+      {"date": "06-23", "price": 115.7},
+      {"date": "06-24", "price": 116.2},
+      {"date": "06-25", "price": 116.5}
+    ]
+  }
+]
+EOF
+
+# 更新 index.html 文件
+cat > index.html << 'EOF'
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -714,3 +810,7 @@
     </script>
 </body>
 </html>
+EOF
+
+# 提交更改
+git add . && git commit -m "精简数据并添加导出功能，修复排序图标对齐" && git push origin main
