@@ -150,38 +150,11 @@
             transform: scale(1.005);
         }
         
-        .chart-container {
-            height: 50px;
-            width: 140px;
+        .kline-container {
+            height: 200px;
+            width: 100%;
             margin: 0 auto;
             position: relative;
-            cursor: pointer;
-        }
-        
-        .chart-container:hover .chart-tooltip {
-            display: block;
-        }
-        
-        .chart-tooltip {
-            display: none;
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 360px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            z-index: 100;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .chart-tooltip canvas {
-            width: 100% !important;
-            height: 100% !important;
         }
         
         .kpi-card {
@@ -397,6 +370,10 @@
             font-size: 0.85rem;
         }
         
+        .sort-indicator i.active {
+            color: var(--primary-color);
+        }
+        
         @media (max-width: 992px) {
             .table-responsive {
                 font-size: 0.85rem;
@@ -404,6 +381,10 @@
             
             .valuation-indicator {
                 height: 10px;
+            }
+            
+            .kline-container {
+                height: 150px;
             }
         }
         
@@ -431,20 +412,8 @@
                 width: auto;
             }
             
-            .chart-container {
-                width: 120px;
-            }
-            
-            .chart-tooltip {
-                width: 300px;
-                height: 180px;
-                left: 0;
-                transform: translateX(0);
-            }
-            
-            .date-range-controls {
-                flex-direction: column;
-                gap: 10px;
+            .kline-container {
+                height: 120px;
             }
         }
     </style>
@@ -494,7 +463,7 @@
                 <h5 class="mb-0">网格交易标的列表</h5>
                 <div>
                     <button class="btn btn-sm btn-outline-primary me-2"><i class="fas fa-download me-1"></i>导出数据</button>
-                    <button class="btn btn-sm btn-outline-success"><i class="fas fa-sync-alt me-1"></i>刷新数据</button>
+                    <button class="btn btn-sm btn-outline-success" id="refresh-btn"><i class="fas fa-sync-alt me-1"></i>刷新数据</button>
                 </div>
             </div>
             <div class="table-responsive">
@@ -502,8 +471,8 @@
                     <thead>
                         <tr>
                             <th>名称</th>
-                            <th id="volatility-header">波动率 <span class="sort-indicator"><i class="fas fa-sort"></i></span></th>
-                            <th id="valuation-header">估值水平 <span class="sort-indicator"><i class="fas fa-sort"></i></span></th>
+                            <th id="volatility-header">波动率 <span class="sort-indicator"><i class="fas fa-sort-up" id="volatility-up"></i><i class="fas fa-sort-down" id="volatility-down"></i></span></th>
+                            <th id="valuation-header">估值水平 <span class="sort-indicator"><i class="fas fa-sort-up" id="valuation-up"></i><i class="fas fa-sort-down" id="valuation-down"></i></span></th>
                             <th>预估年化收益</th>
                             <th>日K线</th>
                         </tr>
@@ -524,186 +493,43 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 债券数据
-        const bondData = [
-            {
-                id: 1,
-                name: "浦发转债",
-                code: "110059",
-                rating: "AAA",
-                dailyVol: 1.8,
-                weeklyVol: 4.2,
-                monthlyVol: 12.5,
-                yearlyVol: 26.8,
-                valuation: 35,
-                valuationStatus: "low",
-                valuationText: "估值偏低",
-                yield: 6.8,
-                avgYield: 5.2,
-                basePrice: 105,
-                volatility: 1.5
-            },
-            {
-                id: 2,
-                name: "苏银转债",
-                code: "110053",
-                rating: "AAA",
-                dailyVol: 2.5,
-                weeklyVol: 6.1,
-                monthlyVol: 18.2,
-                yearlyVol: 34.7,
-                valuation: 55,
-                valuationStatus: "mid",
-                valuationText: "估值合理",
-                yield: 7.5,
-                avgYield: 6.1,
-                basePrice: 112,
-                volatility: 2.0
-            },
-            {
-                id: 3,
-                name: "中信转债",
-                code: "113021",
-                rating: "AAA",
-                dailyVol: 3.8,
-                weeklyVol: 9.2,
-                monthlyVol: 24.7,
-                yearlyVol: 42.3,
-                valuation: 75,
-                valuationStatus: "high",
-                valuationText: "估值偏高",
-                yield: 9.2,
-                avgYield: 7.8,
-                basePrice: 98,
-                volatility: 3.0
-            },
-            {
-                id: 4,
-                name: "光大转债",
-                code: "113011",
-                rating: "AAA",
-                dailyVol: 1.9,
-                weeklyVol: 5.3,
-                monthlyVol: 16.8,
-                yearlyVol: 31.5,
-                valuation: 45,
-                valuationStatus: "mid",
-                valuationText: "估值合理",
-                yield: 5.9,
-                avgYield: 5.6,
-                basePrice: 120,
-                volatility: 1.8
-            },
-            {
-                id: 5,
-                name: "兴业转债",
-                code: "113052",
-                rating: "AAA",
-                dailyVol: 2.2,
-                weeklyVol: 5.8,
-                monthlyVol: 17.3,
-                yearlyVol: 33.2,
-                valuation: 60,
-                valuationStatus: "mid",
-                valuationText: "估值合理",
-                yield: 7.2,
-                avgYield: 6.8,
-                basePrice: 115,
-                volatility: 2.2
+        // 排序状态
+        let sortState = {
+            volatility: { active: false, direction: 'asc' },
+            valuation: { active: false, direction: 'asc' }
+        };
+        
+        // 加载JSON数据
+        async function loadBondData() {
+            try {
+                const response = await fetch('data.json');
+                return await response.json();
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                return [];
             }
-        ];
-
-        // 生成随机价格数据
-        function generatePriceData(base, volatility, count) {
-            let data = [base];
-            for(let i = 1; i < count; i++) {
-                // 生成随机波动
-                const change = (Math.random() - 0.5) * 2 * volatility;
-                const newPrice = data[i-1] * (1 + change/100);
-                data.push(parseFloat(newPrice.toFixed(2)));
-            }
-            return data;
         }
         
-        // 创建日期标签
-        function generateDateLabels(count) {
-            const today = new Date();
-            const labels = [];
-            for (let i = count - 1; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(today.getDate() - i);
-                labels.push(date.toLocaleDateString('zh-CN', {month: '2-digit', day: '2-digit'}));
-            }
-            return labels;
-        }
-        
-        // 创建迷你K线图
-        function createMiniChart(canvasId, basePrice, volatility) {
+        // 创建K线图
+        function createKlineChart(canvasId, priceData, bondName) {
             const ctx = document.getElementById(canvasId).getContext('2d');
-            const data = generatePriceData(basePrice, volatility, 20);
-            const labels = generateDateLabels(20);
+            const prices = priceData.map(item => item.price);
+            const dates = priceData.map(item => item.date);
             
             // 计算图表需要的值
-            const minVal = Math.min(...data);
-            const maxVal = Math.max(...data);
+            const minVal = Math.min(...prices);
+            const maxVal = Math.max(...prices);
             const range = maxVal - minVal;
             
             return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        borderColor: data[data.length-1] >= data[0] ? '#27ae60' : '#e74c3c',
-                        borderWidth: 1.8,
-                        pointRadius: 0,
-                        tension: 0.4,
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: false }
-                    },
-                    scales: {
-                        x: {
-                            display: false,
-                            grid: { display: false }
-                        },
-                        y: {
-                            display: false,
-                            min: minVal - range * 0.1,
-                            max: maxVal + range * 0.1,
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // 创建大尺寸K线图
-        function createLargeChart(canvasId, basePrice, volatility, bondName) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            const data = generatePriceData(basePrice, volatility, 30);
-            const labels = generateDateLabels(30);
-            
-            // 计算图表需要的值
-            const minVal = Math.min(...data);
-            const maxVal = Math.max(...data);
-            const range = maxVal - minVal;
-            
-            const chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
+                    labels: dates,
                     datasets: [{
                         label: bondName + ' 价格走势',
-                        data: data,
-                        borderColor: data[data.length-1] >= data[0] ? '#27ae60' : '#e74c3c',
-                        borderWidth: 3,
+                        data: prices,
+                        borderColor: prices[prices.length-1] >= prices[0] ? '#27ae60' : '#e74c3c',
+                        borderWidth: 2,
                         pointRadius: 0,
                         tension: 0.1,
                         fill: false
@@ -717,21 +543,6 @@
                         tooltip: {
                             mode: 'index',
                             intersect: false
-                        },
-                        zoom: {
-                            zoom: {
-                                wheel: {
-                                    enabled: true,
-                                },
-                                pinch: {
-                                    enabled: true
-                                },
-                                mode: 'x',
-                            },
-                            pan: {
-                                enabled: true,
-                                mode: 'x',
-                            }
                         }
                     },
                     scales: {
@@ -751,95 +562,21 @@
                     }
                 }
             });
-            
-            return chart;
         }
         
-        // 创建自定义范围滑块
-        function createRangeSlider(min, max, container) {
-            const slider = document.createElement('div');
-            slider.className = 'range-slider';
-            slider.innerHTML = `
-                <div class="track"></div>
-                <div class="handle left-handle" style="left: 0%"></div>
-                <div class="handle right-handle" style="left: 100%"></div>
-                <div class="range-values">
-                    <span class="min-value">${min}</span>
-                    <span class="max-value">${max}</span>
-                </div>
-            `;
+        // 更新排序指示器
+        function updateSortIndicators() {
+            // 波动率排序指示器
+            document.getElementById('volatility-up').classList.toggle('active', 
+                sortState.volatility.active && sortState.volatility.direction === 'asc');
+            document.getElementById('volatility-down').classList.toggle('active', 
+                sortState.volatility.active && sortState.volatility.direction === 'desc');
             
-            container.appendChild(slider);
-            
-            const leftHandle = slider.querySelector('.left-handle');
-            const rightHandle = slider.querySelector('.right-handle');
-            const track = slider.querySelector('.track');
-            const minValue = slider.querySelector('.min-value');
-            const maxValue = slider.querySelector('.max-value');
-            
-            let leftPercent = 0;
-            let rightPercent = 100;
-            
-            function updateSlider() {
-                leftHandle.style.left = `${leftPercent}%`;
-                rightHandle.style.left = `${rightPercent}%`;
-                track.style.left = `${leftPercent}%`;
-                track.style.width = `${rightPercent - leftPercent}%`;
-                
-                minValue.textContent = Math.round(leftPercent) + '%';
-                maxValue.textContent = Math.round(rightPercent) + '%';
-            }
-            
-            function moveHandle(handle, percent) {
-                if (handle === leftHandle) {
-                    leftPercent = Math.min(percent, rightPercent - 5);
-                } else {
-                    rightPercent = Math.max(percent, leftPercent + 5);
-                }
-                updateSlider();
-            }
-            
-            function getPercent(e) {
-                const rect = slider.getBoundingClientRect();
-                return Math.min(100, Math.max(0, (e.clientX - rect.left) / rect.width * 100));
-            }
-            
-            leftHandle.addEventListener('mousedown', (e) => {
-                e.preventDefault();
-                const onMove = (e) => moveHandle(leftHandle, getPercent(e));
-                const onUp = () => {
-                    document.removeEventListener('mousemove', onMove);
-                    document.removeEventListener('mouseup', onUp);
-                };
-                document.addEventListener('mousemove', onMove);
-                document.addEventListener('mouseup', onUp);
-            });
-            
-            rightHandle.addEventListener('mousedown', (e) => {
-                e.preventDefault();
-                const onMove = (e) => moveHandle(rightHandle, getPercent(e));
-                const onUp = () => {
-                    document.removeEventListener('mousemove', onMove);
-                    document.removeEventListener('mouseup', onUp);
-                };
-                document.addEventListener('mousemove', onMove);
-                document.addEventListener('mouseup', onUp);
-            });
-            
-            updateSlider();
-            
-            return {
-                setRange: (min, max) => {
-                    leftPercent = min;
-                    rightPercent = max;
-                    updateSlider();
-                },
-                onRangeChange: (callback) => {
-                    slider.addEventListener('change', () => {
-                        callback(leftPercent, rightPercent);
-                    });
-                }
-            };
+            // 估值水平排序指示器
+            document.getElementById('valuation-up').classList.toggle('active', 
+                sortState.valuation.active && sortState.valuation.direction === 'asc');
+            document.getElementById('valuation-down').classList.toggle('active', 
+                sortState.valuation.active && sortState.valuation.direction === 'desc');
         }
         
         // 渲染债券表格
@@ -894,18 +631,8 @@
                         <div class="small text-muted">历史平均: ${bond.avgYield}%</div>
                     </td>
                     <td>
-                        <div class="chart-container" data-id="${bond.id}">
-                            <canvas id="chart-${bond.id}"></canvas>
-                            <div class="chart-tooltip">
-                                <div class="date-range-controls">
-                                    <button class="btn btn-sm btn-outline-primary reset-zoom">重置视图</button>
-                                    <div class="range-slider-container">
-                                        <div class="range-slider" id="slider-${bond.id}"></div>
-                                    </div>
-                                    <button class="btn btn-sm btn-outline-secondary apply-range">应用范围</button>
-                                </div>
-                                <canvas id="tooltip-chart-${bond.id}"></canvas>
-                            </div>
+                        <div class="kline-container">
+                            <canvas id="kline-${bond.id}"></canvas>
                         </div>
                     </td>
                 `;
@@ -913,71 +640,59 @@
                 
                 // 延迟渲染图表以确保canvas元素存在
                 setTimeout(() => {
-                    // 创建迷你图表
-                    createMiniChart(`chart-${bond.id}`, bond.basePrice, bond.volatility);
-                    
-                    // 创建大图工具提示
-                    const chart = createLargeChart(`tooltip-chart-${bond.id}`, bond.basePrice, bond.volatility, bond.name);
-                    
-                    // 创建范围滑块
-                    const sliderContainer = document.querySelector(`#slider-${bond.id}`);
-                    const slider = createRangeSlider(0, 100, sliderContainer);
-                    
-                    // 重置视图按钮
-                    document.querySelector(`#slider-${bond.id}`).closest('.chart-tooltip').querySelector('.reset-zoom').addEventListener('click', () => {
-                        chart.resetZoom();
-                        slider.setRange(0, 100);
-                    });
-                    
-                    // 应用范围按钮
-                    document.querySelector(`#slider-${bond.id}`).closest('.chart-tooltip').querySelector('.apply-range').addEventListener('click', () => {
-                        const start = Math.max(0, Math.floor(chart.data.labels.length * slider.leftPercent / 100));
-                        const end = Math.min(chart.data.labels.length - 1, Math.ceil(chart.data.labels.length * slider.rightPercent / 100));
-                        
-                        // 设置新的显示范围
-                        chart.options.scales.x.min = chart.data.labels[start];
-                        chart.options.scales.x.max = chart.data.labels[end];
-                        chart.update();
-                    });
+                    createKlineChart(`kline-${bond.id}`, bond.priceData, bond.name);
                 }, 100);
             });
         }
         
         // 排序功能
-        let sortDirection = {
-            volatility: 'asc',
-            valuation: 'asc'
-        };
-        
         function sortByVolatility() {
-            const direction = sortDirection.volatility === 'asc' ? 1 : -1;
+            // 切换排序状态
+            if (!sortState.volatility.active) {
+                sortState.volatility.active = true;
+                sortState.volatility.direction = 'asc';
+            } else {
+                sortState.volatility.direction = 
+                    sortState.volatility.direction === 'asc' ? 'desc' : 'asc';
+            }
+            
+            // 更新其他排序状态
+            sortState.valuation.active = false;
+            
+            // 更新指示器
+            updateSortIndicators();
+            
+            // 执行排序
+            const direction = sortState.volatility.direction === 'asc' ? 1 : -1;
             bondData.sort((a, b) => {
                 // 默认按月波动率排序
                 return (a.monthlyVol - b.monthlyVol) * direction;
             });
             
-            // 反转排序方向
-            sortDirection.volatility = sortDirection.volatility === 'asc' ? 'desc' : 'asc';
-            
-            // 更新排序指示器
-            document.getElementById('volatility-header').innerHTML = 
-                `波动率 <span class="sort-indicator"><i class="fas fa-sort-${sortDirection.volatility === 'asc' ? 'up' : 'down'}"></i></span>`;
-            
             renderBondsTable(bondData);
         }
         
         function sortByValuation() {
-            const direction = sortDirection.valuation === 'asc' ? 1 : -1;
+            // 切换排序状态
+            if (!sortState.valuation.active) {
+                sortState.valuation.active = true;
+                sortState.valuation.direction = 'asc';
+            } else {
+                sortState.valuation.direction = 
+                    sortState.valuation.direction === 'asc' ? 'desc' : 'asc';
+            }
+            
+            // 更新其他排序状态
+            sortState.volatility.active = false;
+            
+            // 更新指示器
+            updateSortIndicators();
+            
+            // 执行排序
+            const direction = sortState.valuation.direction === 'asc' ? 1 : -1;
             bondData.sort((a, b) => {
                 return (a.valuation - b.valuation) * direction;
             });
-            
-            // 反转排序方向
-            sortDirection.valuation = sortDirection.valuation === 'asc' ? 'desc' : 'asc';
-            
-            // 更新排序指示器
-            document.getElementById('valuation-header').innerHTML = 
-                `估值水平 <span class="sort-indicator"><i class="fas fa-sort-${sortDirection.valuation === 'asc' ? 'up' : 'down'}"></i></span>`;
             
             renderBondsTable(bondData);
         }
@@ -997,14 +712,27 @@
                 now.toLocaleString('zh-CN', options);
         }
         
+        // 全局债券数据
+        let bondData = [];
+        
         // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 加载数据
+            bondData = await loadBondData();
+            
             // 渲染初始表格
             renderBondsTable(bondData);
             
             // 添加排序事件
             document.getElementById('volatility-header').addEventListener('click', sortByVolatility);
             document.getElementById('valuation-header').addEventListener('click', sortByValuation);
+            
+            // 添加刷新按钮事件
+            document.getElementById('refresh-btn').addEventListener('click', async function() {
+                bondData = await loadBondData();
+                renderBondsTable(bondData);
+                updateTime();
+            });
             
             // 更新时间
             updateTime();
