@@ -71,6 +71,18 @@
             color: var(--primary-color);
             border-top: 1px solid #e0e6ed;
             white-space: nowrap;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .table th:hover {
+            background-color: #e3eeff;
+        }
+        
+        .sort-indicator {
+            margin-left: 5px;
+            font-size: 0.8em;
+            opacity: 0.7;
         }
         
         .table td {
@@ -87,32 +99,26 @@
             background-color: #f8fbff;
         }
         
-        .status-badge {
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        
-        .badge-success {
-            background-color: rgba(39, 174, 96, 0.15);
-            color: var(--success-color);
-        }
-        
-        .badge-warning {
-            background-color: rgba(243, 156, 18, 0.15);
-            color: var(--warning-color);
-        }
-        
-        .badge-danger {
-            background-color: rgba(231, 76, 60, 0.15);
-            color: var(--danger-color);
-        }
-        
         .chart-container {
             height: 40px;
             width: 120px;
             margin: 0 auto;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .chart-container:hover::after {
+            content: "点击查看大图";
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            font-size: 0.7rem;
+            color: var(--primary-color);
+            text-align: center;
+            background: rgba(255,255,255,0.9);
+            padding: 2px;
+            border-radius: 3px;
         }
         
         .kpi-card {
@@ -140,13 +146,6 @@
         .negative {
             color: var(--danger-color);
             font-weight: 600;
-        }
-        
-        .grid-btn {
-            border-radius: 20px;
-            padding: 6px 15px;
-            font-weight: 500;
-            transition: all 0.2s;
         }
         
         .search-container {
@@ -188,14 +187,6 @@
             margin: 2px;
         }
         
-        .volatility-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        
         .volatility-container {
             display: flex;
             flex-direction: column;
@@ -221,13 +212,23 @@
             width: 50px;
         }
         
+        .valuation-container {
+            text-align: center;
+        }
+        
+        .valuation-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
         .valuation-indicator {
             width: 100px;
             height: 10px;
             background: linear-gradient(to right, #27ae60, #f39c12, #e74c3c);
             border-radius: 5px;
             position: relative;
-            margin: 8px auto;
+            margin: 0 auto;
         }
         
         .valuation-pointer {
@@ -246,12 +247,15 @@
             font-size: 0.7rem;
             color: #6c757d;
             margin-top: 5px;
+            width: 100px;
+            margin: 5px auto 0;
         }
         
         .valuation-status {
             text-align: center;
             font-weight: 500;
-            margin-top: 5px;
+            margin-top: 8px;
+            font-size: 0.85rem;
         }
         
         .valuation-low {
@@ -266,6 +270,11 @@
             color: #e74c3c;
         }
         
+        .modal-chart {
+            width: 100%;
+            height: 300px;
+        }
+        
         @media (max-width: 992px) {
             .table-responsive {
                 font-size: 0.85rem;
@@ -276,6 +285,10 @@
             }
             
             .valuation-indicator {
+                width: 80px;
+            }
+            
+            .valuation-labels {
                 width: 80px;
             }
         }
@@ -323,7 +336,7 @@
             <div class="col-md-3">
                 <div class="card kpi-card">
                     <div class="kpi-title">平台标的数量</div>
-                    <div class="kpi-value">52</div>
+                    <div class="kpi-value">48</div>
                     <div><span class="positive">+8%</span> 本月新增</div>
                 </div>
             </div>
@@ -356,7 +369,7 @@
                 <div class="row">
                     <div class="col-md-6 search-container">
                         <i class="fas fa-search"></i>
-                        <input type="text" class="form-control" placeholder="搜索转债名称或代码...">
+                        <input type="text" class="form-control" id="search-input" placeholder="搜索转债名称或代码...">
                     </div>
                     <div class="col-md-6 d-flex align-items-center">
                         <div class="d-flex flex-wrap">
@@ -385,288 +398,14 @@
                     <thead>
                         <tr>
                             <th>名称</th>
-                            <th>波动率</th>
-                            <th>估值水平</th>
+                            <th id="volatility-header">波动率 <span class="sort-indicator"><i class="fas fa-sort"></i></span></th>
+                            <th id="valuation-header">估值水平 <span class="sort-indicator"><i class="fas fa-sort"></i></span></th>
                             <th>预估年化收益</th>
                             <th>当日K线</th>
-                            <th>操作</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- 测试标的 1 -->
-                        <tr>
-                            <td>
-                                <div class="fw-bold">浦发转债</div>
-                                <div class="text-muted small">110059 | AAA</div>
-                            </td>
-                            <td>
-                                <div class="volatility-container">
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">日波动率:</span>
-                                        <span class="volatility-value positive">1.8%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">周波动率:</span>
-                                        <span class="volatility-value">4.2%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">月波动率:</span>
-                                        <span class="volatility-value">12.5%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">年波动率:</span>
-                                        <span class="volatility-value">26.8%</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-center">
-                                    <div class="valuation-indicator">
-                                        <div class="valuation-pointer" style="left: 30%;"></div>
-                                    </div>
-                                    <div class="valuation-labels">
-                                        <span>低估</span>
-                                        <span>适中</span>
-                                        <span>高估</span>
-                                    </div>
-                                    <div class="valuation-status valuation-low">估值偏低</div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-bold positive">6.8%</div>
-                                <div class="small text-muted">历史平均: 5.2%</div>
-                            </td>
-                            <td>
-                                <div class="chart-container">
-                                    <canvas id="chart1"></canvas>
-                                </div>
-                            </td>
-                            <td>
-                                <button class="btn btn-primary btn-sm grid-btn">
-                                    <i class="fas fa-th me-1"></i>网格交易
-                                </button>
-                            </td>
-                        </tr>
-                        
-                        <!-- 测试标的 2 -->
-                        <tr>
-                            <td>
-                                <div class="fw-bold">苏银转债</div>
-                                <div class="text-muted small">110053 | AAA</div>
-                            </td>
-                            <td>
-                                <div class="volatility-container">
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">日波动率:</span>
-                                        <span class="volatility-value">2.5%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">周波动率:</span>
-                                        <span class="volatility-value positive">6.1%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">月波动率:</span>
-                                        <span class="volatility-value">18.2%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">年波动率:</span>
-                                        <span class="volatility-value">34.7%</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-center">
-                                    <div class="valuation-indicator">
-                                        <div class="valuation-pointer" style="left: 55%;"></div>
-                                    </div>
-                                    <div class="valuation-labels">
-                                        <span>低估</span>
-                                        <span>适中</span>
-                                        <span>高估</span>
-                                    </div>
-                                    <div class="valuation-status valuation-mid">估值合理</div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-bold positive">7.5%</div>
-                                <div class="small text-muted">历史平均: 6.1%</div>
-                            </td>
-                            <td>
-                                <div class="chart-container">
-                                    <canvas id="chart2"></canvas>
-                                </div>
-                            </td>
-                            <td>
-                                <button class="btn btn-primary btn-sm grid-btn">
-                                    <i class="fas fa-th me-1"></i>网格交易
-                                </button>
-                            </td>
-                        </tr>
-                        
-                        <!-- 测试标的 3 -->
-                        <tr>
-                            <td>
-                                <div class="fw-bold">中信转债</div>
-                                <div class="text-muted small">113021 | AAA</div>
-                            </td>
-                            <td>
-                                <div class="volatility-container">
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">日波动率:</span>
-                                        <span class="volatility-value negative">3.8%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">周波动率:</span>
-                                        <span class="volatility-value negative">9.2%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">月波动率:</span>
-                                        <span class="volatility-value">24.7%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">年波动率:</span>
-                                        <span class="volatility-value">42.3%</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-center">
-                                    <div class="valuation-indicator">
-                                        <div class="valuation-pointer" style="left: 75%;"></div>
-                                    </div>
-                                    <div class="valuation-labels">
-                                        <span>低估</span>
-                                        <span>适中</span>
-                                        <span>高估</span>
-                                    </div>
-                                    <div class="valuation-status valuation-high">估值偏高</div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-bold positive">9.2%</div>
-                                <div class="small text-muted">历史平均: 7.8%</div>
-                            </td>
-                            <td>
-                                <div class="chart-container">
-                                    <canvas id="chart3"></canvas>
-                                </div>
-                            </td>
-                            <td>
-                                <button class="btn btn-primary btn-sm grid-btn">
-                                    <i class="fas fa-th me-1"></i>网格交易
-                                </button>
-                            </td>
-                        </tr>
-                        
-                        <!-- 测试标的 4 -->
-                        <tr>
-                            <td>
-                                <div class="fw-bold">光大转债</div>
-                                <div class="text-muted small">113011 | AAA</div>
-                            </td>
-                            <td>
-                                <div class="volatility-container">
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">日波动率:</span>
-                                        <span class="volatility-value">1.9%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">周波动率:</span>
-                                        <span class="volatility-value">5.3%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">月波动率:</span>
-                                        <span class="volatility-value">16.8%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">年波动率:</span>
-                                        <span class="volatility-value">31.5%</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-center">
-                                    <div class="valuation-indicator">
-                                        <div class="valuation-pointer" style="left: 45%;"></div>
-                                    </div>
-                                    <div class="valuation-labels">
-                                        <span>低估</span>
-                                        <span>适中</span>
-                                        <span>高估</span>
-                                    </div>
-                                    <div class="valuation-status valuation-mid">估值合理</div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-bold positive">5.9%</div>
-                                <div class="small text-muted">历史平均: 5.6%</div>
-                            </td>
-                            <td>
-                                <div class="chart-container">
-                                    <canvas id="chart4"></canvas>
-                                </div>
-                            </td>
-                            <td>
-                                <button class="btn btn-primary btn-sm grid-btn">
-                                    <i class="fas fa-th me-1"></i>网格交易
-                                </button>
-                            </td>
-                        </tr>
-                        
-                        <!-- 测试标的 5 (用于检验) -->
-                        <tr>
-                            <td>
-                                <div class="fw-bold">网格测试转债</div>
-                                <div class="text-muted small">TEST01 | AA+</div>
-                            </td>
-                            <td>
-                                <div class="volatility-container">
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">日波动率:</span>
-                                        <span class="volatility-value negative">4.5%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">周波动率:</span>
-                                        <span class="volatility-value negative">12.8%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">月波动率:</span>
-                                        <span class="volatility-value">30.2%</span>
-                                    </div>
-                                    <div class="volatility-item">
-                                        <span class="volatility-label">年波动率:</span>
-                                        <span class="volatility-value">48.6%</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-center">
-                                    <div class="valuation-indicator">
-                                        <div class="valuation-pointer" style="left: 85%;"></div>
-                                    </div>
-                                    <div class="valuation-labels">
-                                        <span>低估</span>
-                                        <span>适中</span>
-                                        <span>高估</span>
-                                    </div>
-                                    <div class="valuation-status valuation-high">估值过高</div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-bold positive">12.5%</div>
-                                <div class="small text-muted">历史平均: 9.3%</div>
-                            </td>
-                            <td>
-                                <div class="chart-container">
-                                    <canvas id="chart5"></canvas>
-                                </div>
-                            </td>
-                            <td>
-                                <button class="btn btn-primary btn-sm grid-btn">
-                                    <i class="fas fa-th me-1"></i>网格交易
-                                </button>
-                            </td>
-                        </tr>
+                    <tbody id="bonds-table-body">
+                        <!-- 数据由JavaScript动态生成 -->
                     </tbody>
                 </table>
             </div>
@@ -744,12 +483,105 @@
         
         <!-- 页脚 -->
         <div class="footer">
-            <p class="mb-2">数据更新时间: 2023年10月15日 15:30:00</p>
+            <p class="mb-2">数据更新时间: <span id="update-time"></span></p>
             <p class="mb-0">免责声明: 本平台数据仅供参考，不构成任何投资建议。市场有风险，投资需谨慎。</p>
         </div>
     </div>
 
+    <!-- K线大图模态框 -->
+    <div class="modal fade" id="chartModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chartModalTitle">K线图详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="chart-container">
+                        <canvas id="modalChart" class="modal-chart"></canvas>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // 债券数据
+        const bondData = [
+            {
+                id: 1,
+                name: "浦发转债",
+                code: "110059",
+                rating: "AAA",
+                dailyVol: 1.8,
+                weeklyVol: 4.2,
+                monthlyVol: 12.5,
+                yearlyVol: 26.8,
+                valuation: 35,
+                valuationStatus: "low",
+                valuationText: "估值偏低",
+                yield: 6.8,
+                avgYield: 5.2,
+                basePrice: 105,
+                volatility: 1.5
+            },
+            {
+                id: 2,
+                name: "苏银转债",
+                code: "110053",
+                rating: "AAA",
+                dailyVol: 2.5,
+                weeklyVol: 6.1,
+                monthlyVol: 18.2,
+                yearlyVol: 34.7,
+                valuation: 55,
+                valuationStatus: "mid",
+                valuationText: "估值合理",
+                yield: 7.5,
+                avgYield: 6.1,
+                basePrice: 112,
+                volatility: 2.0
+            },
+            {
+                id: 3,
+                name: "中信转债",
+                code: "113021",
+                rating: "AAA",
+                dailyVol: 3.8,
+                weeklyVol: 9.2,
+                monthlyVol: 24.7,
+                yearlyVol: 42.3,
+                valuation: 75,
+                valuationStatus: "high",
+                valuationText: "估值偏高",
+                yield: 9.2,
+                avgYield: 7.8,
+                basePrice: 98,
+                volatility: 3.0
+            },
+            {
+                id: 4,
+                name: "光大转债",
+                code: "113011",
+                rating: "AAA",
+                dailyVol: 1.9,
+                weeklyVol: 5.3,
+                monthlyVol: 16.8,
+                yearlyVol: 31.5,
+                valuation: 45,
+                valuationStatus: "mid",
+                valuationText: "估值合理",
+                yield: 5.9,
+                avgYield: 5.6,
+                basePrice: 120,
+                volatility: 1.8
+            }
+        ];
+
         // 生成随机价格数据
         function generatePriceData(base, volatility, count) {
             let data = [base];
@@ -772,7 +604,7 @@
             const maxVal = Math.max(...data);
             const range = maxVal - minVal;
             
-            new Chart(ctx, {
+            return new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: data.map((_, i) => i),
@@ -808,20 +640,236 @@
             });
         }
         
-        // 初始化图表
-        document.addEventListener('DOMContentLoaded', function() {
-            createMiniChart('chart1', 105, 1.5);
-            createMiniChart('chart2', 112, 2.0);
-            createMiniChart('chart3', 98, 3.0);
-            createMiniChart('chart4', 120, 1.8);
-            createMiniChart('chart5', 95, 4.2);
+        // 创建大尺寸K线图
+        function createLargeChart(canvasId, basePrice, volatility, bondName) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const data = generatePriceData(basePrice, volatility, 50);
             
-            // 添加网格按钮事件
-            document.querySelectorAll('.grid-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const bondName = this.closest('tr').querySelector('.fw-bold').textContent;
-                    alert(`您选择了 ${bondName} 进行网格交易设置`);
-                });
+            // 计算图表需要的值
+            const minVal = Math.min(...data);
+            const maxVal = Math.max(...data);
+            const range = maxVal - minVal;
+            
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map((_, i) => `T-${50-i}`),
+                    datasets: [{
+                        label: bondName + ' 价格走势',
+                        data: data,
+                        borderColor: data[data.length-1] >= data[0] ? '#27ae60' : '#e74c3c',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false }
+                        },
+                        y: {
+                            min: minVal - range * 0.1,
+                            max: maxVal + range * 0.1,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 渲染债券表格
+        function renderBondsTable(data) {
+            const tbody = document.getElementById('bonds-table-body');
+            tbody.innerHTML = '';
+            
+            data.forEach(bond => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="fw-bold">${bond.name}</div>
+                        <div class="text-muted small">${bond.code} | ${bond.rating}</div>
+                    </td>
+                    <td>
+                        <div class="volatility-container">
+                            <div class="volatility-item">
+                                <span class="volatility-label">日波动率:</span>
+                                <span class="volatility-value ${bond.dailyVol < 2 ? 'positive' : bond.dailyVol > 3 ? 'negative' : ''}">${bond.dailyVol}%</span>
+                            </div>
+                            <div class="volatility-item">
+                                <span class="volatility-label">周波动率:</span>
+                                <span class="volatility-value ${bond.weeklyVol < 4 ? 'positive' : bond.weeklyVol > 7 ? 'negative' : ''}">${bond.weeklyVol}%</span>
+                            </div>
+                            <div class="volatility-item">
+                                <span class="volatility-label">月波动率:</span>
+                                <span class="volatility-value ${bond.monthlyVol < 15 ? 'positive' : bond.monthlyVol > 20 ? 'negative' : ''}">${bond.monthlyVol}%</span>
+                            </div>
+                            <div class="volatility-item">
+                                <span class="volatility-label">年波动率:</span>
+                                <span class="volatility-value ${bond.yearlyVol < 30 ? 'positive' : bond.yearlyVol > 40 ? 'negative' : ''}">${bond.yearlyVol}%</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="valuation-container">
+                            <div class="valuation-value">当前估值: ${bond.valuation}</div>
+                            <div class="valuation-indicator">
+                                <div class="valuation-pointer" style="left: ${bond.valuation}%;"></div>
+                            </div>
+                            <div class="valuation-labels">
+                                <span>0</span>
+                                <span>40</span>
+                                <span>70</span>
+                                <span>100</span>
+                            </div>
+                            <div class="valuation-status valuation-${bond.valuationStatus}">${bond.valuationText}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="fw-bold positive">${bond.yield}%</div>
+                        <div class="small text-muted">历史平均: ${bond.avgYield}%</div>
+                    </td>
+                    <td>
+                        <div class="chart-container" data-id="${bond.id}">
+                            <canvas id="chart-${bond.id}"></canvas>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+                
+                // 延迟渲染图表以确保canvas元素存在
+                setTimeout(() => {
+                    createMiniChart(`chart-${bond.id}`, bond.basePrice, bond.volatility);
+                }, 100);
+            });
+        }
+        
+        // 排序功能
+        let sortDirection = {
+            volatility: 'asc',
+            valuation: 'asc'
+        };
+        
+        function sortByVolatility() {
+            const direction = sortDirection.volatility === 'asc' ? 1 : -1;
+            bondData.sort((a, b) => {
+                // 默认按月波动率排序
+                return (a.monthlyVol - b.monthlyVol) * direction;
+            });
+            
+            // 反转排序方向
+            sortDirection.volatility = sortDirection.volatility === 'asc' ? 'desc' : 'asc';
+            
+            // 更新排序指示器
+            document.getElementById('volatility-header').innerHTML = 
+                `波动率 <span class="sort-indicator"><i class="fas fa-sort-${sortDirection.volatility === 'asc' ? 'up' : 'down'}"></i></span>`;
+            
+            renderBondsTable(bondData);
+        }
+        
+        function sortByValuation() {
+            const direction = sortDirection.valuation === 'asc' ? 1 : -1;
+            bondData.sort((a, b) => {
+                return (a.valuation - b.valuation) * direction;
+            });
+            
+            // 反转排序方向
+            sortDirection.valuation = sortDirection.valuation === 'asc' ? 'desc' : 'asc';
+            
+            // 更新排序指示器
+            document.getElementById('valuation-header').innerHTML = 
+                `估值水平 <span class="sort-indicator"><i class="fas fa-sort-${sortDirection.valuation === 'asc' ? 'up' : 'down'}"></i></span>`;
+            
+            renderBondsTable(bondData);
+        }
+        
+        // 搜索功能
+        function searchBonds() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            if (!searchTerm) {
+                renderBondsTable(bondData);
+                return;
+            }
+            
+            const filtered = bondData.filter(bond => {
+                return bond.name.toLowerCase().includes(searchTerm) || 
+                       bond.code.includes(searchTerm);
+            });
+            
+            renderBondsTable(filtered);
+        }
+        
+        // 更新时间
+        function updateTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('update-time').textContent = 
+                now.toLocaleString('zh-CN', options);
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 渲染初始表格
+            renderBondsTable(bondData);
+            
+            // 添加排序事件
+            document.getElementById('volatility-header').addEventListener('click', sortByVolatility);
+            document.getElementById('valuation-header').addEventListener('click', sortByValuation);
+            
+            // 添加搜索事件
+            document.getElementById('search-input').addEventListener('input', searchBonds);
+            
+            // 更新时间
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // 图表点击事件（委托）
+            document.getElementById('bonds-table-body').addEventListener('click', function(e) {
+                if (e.target.closest('.chart-container')) {
+                    const container = e.target.closest('.chart-container');
+                    const bondId = container.dataset.id;
+                    const bond = bondData.find(b => b.id == bondId);
+                    
+                    if (bond) {
+                        // 更新模态框标题
+                        document.getElementById('chartModalTitle').textContent = `${bond.name} (${bond.code}) K线图`;
+                        
+                        // 显示模态框
+                        const modal = new bootstrap.Modal(document.getElementById('chartModal'));
+                        modal.show();
+                        
+                        // 延迟创建图表以确保模态框已显示
+                        setTimeout(() => {
+                            // 清除现有图表（如果存在）
+                            const existingChart = Chart.getChart('modalChart');
+                            if (existingChart) {
+                                existingChart.destroy();
+                            }
+                            
+                            // 创建新图表
+                            createLargeChart('modalChart', bond.basePrice, bond.volatility, bond.name);
+                        }, 500);
+                    }
+                }
             });
         });
     </script>
