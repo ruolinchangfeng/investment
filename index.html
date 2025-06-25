@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>可转债网格交易平台</title>
+    <title>网格交易平台</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -20,9 +20,10 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f5ff;
+            background: linear-gradient(135deg, #f5f9ff 0%, #e6f0ff 100%);
             color: #333;
             padding-top: 20px;
+            min-height: 100vh;
         }
         
         .header {
@@ -32,11 +33,43 @@
             padding: 20px;
             margin-bottom: 25px;
             box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .header::after {
+            content: "";
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
         }
         
         .header h1 {
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            position: relative;
+            z-index: 1;
         }
         
         .card {
@@ -44,19 +77,23 @@
             border: none;
             box-shadow: var(--card-shadow);
             margin-bottom: 20px;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            background: white;
+            overflow: hidden;
         }
         
         .card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
         }
         
         .card-header {
             background: linear-gradient(to right, #f8f9fa, #e9ecef);
             border-bottom: 1px solid #e0e6ed;
             border-radius: 12px 12px 0 0 !important;
-            font-weight: 600;
+            font-weight: 700;
             padding: 15px 20px;
+            color: var(--primary-color);
         }
         
         .table-responsive {
@@ -66,13 +103,14 @@
         
         .table th {
             background-color: #f1f7ff;
-            font-weight: 600;
-            padding: 15px 12px;
+            font-weight: 700;
+            padding: 16px 12px;
             color: var(--primary-color);
             border-top: 1px solid #e0e6ed;
             white-space: nowrap;
             cursor: pointer;
             position: relative;
+            border-bottom: 2px solid var(--primary-color);
         }
         
         .table th:hover {
@@ -86,88 +124,100 @@
         }
         
         .table td {
-            padding: 15px 12px;
+            padding: 14px 12px;
             vertical-align: middle;
             border-top: 1px solid #f0f4f9;
+            transition: background-color 0.2s;
         }
         
         .table tbody tr {
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
         
         .table tbody tr:hover {
             background-color: #f8fbff;
+            transform: scale(1.005);
         }
         
         .chart-container {
-            height: 40px;
-            width: 120px;
+            height: 50px;
+            width: 140px;
             margin: 0 auto;
             position: relative;
             cursor: pointer;
         }
         
-        .chart-container:hover::after {
-            content: "点击查看大图";
+        .chart-container:hover .chart-tooltip {
+            display: block;
+        }
+        
+        .chart-tooltip {
+            display: none;
             position: absolute;
-            bottom: -20px;
-            left: 0;
-            right: 0;
-            font-size: 0.7rem;
-            color: var(--primary-color);
-            text-align: center;
-            background: rgba(255,255,255,0.9);
-            padding: 2px;
-            border-radius: 3px;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 180px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            padding: 10px;
+        }
+        
+        .chart-tooltip canvas {
+            width: 100%;
+            height: 100%;
         }
         
         .kpi-card {
             text-align: center;
             padding: 20px 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            background: rgba(44, 111, 187, 0.08);
+            border-radius: 50%;
         }
         
         .kpi-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 5px 0;
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin: 8px 0;
+            color: var(--primary-color);
+            position: relative;
+            z-index: 1;
         }
         
         .kpi-title {
             color: #6c757d;
             font-size: 0.9rem;
             margin-bottom: 0;
+            font-weight: 600;
         }
         
         .positive {
             color: var(--success-color);
-            font-weight: 600;
+            font-weight: 700;
         }
         
         .negative {
             color: var(--danger-color);
-            font-weight: 600;
-        }
-        
-        .search-container {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        
-        .search-container i {
-            position: absolute;
-            left: 15px;
-            top: 12px;
-            color: #6c757d;
-        }
-        
-        .search-container input {
-            padding-left: 40px;
-            border-radius: 50px;
-            border: 1px solid #dee2e6;
+            font-weight: 700;
         }
         
         .footer {
-            background-color: #fff;
+            background-color: white;
             border-radius: 15px;
             padding: 25px;
             margin-top: 30px;
@@ -175,16 +225,7 @@
             box-shadow: var(--card-shadow);
             color: #6c757d;
             font-size: 0.9rem;
-        }
-        
-        .tag {
-            display: inline-block;
-            background-color: #e9f0ff;
-            color: var(--primary-color);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin: 2px;
+            position: relative;
         }
         
         .volatility-container {
@@ -201,78 +242,106 @@
         }
         
         .volatility-label {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #6c757d;
-            width: 60px;
+            width: 70px;
+            font-weight: 500;
         }
         
         .volatility-value {
-            font-weight: 500;
+            font-weight: 600;
             text-align: right;
             width: 50px;
         }
         
         .valuation-container {
             text-align: center;
+            padding: 8px;
+            background: rgba(241, 247, 255, 0.5);
+            border-radius: 10px;
         }
         
         .valuation-value {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 5px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c3e50;
         }
         
         .valuation-indicator {
-            width: 100px;
-            height: 10px;
+            width: 100%;
+            height: 12px;
             background: linear-gradient(to right, #27ae60, #f39c12, #e74c3c);
-            border-radius: 5px;
+            border-radius: 6px;
             position: relative;
             margin: 0 auto;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .valuation-pointer {
             position: absolute;
-            top: -5px;
-            width: 6px;
+            top: -4px;
+            width: 8px;
             height: 20px;
             background-color: #2c3e50;
             transform: translateX(-50%);
             border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .valuation-labels {
             display: flex;
             justify-content: space-between;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #6c757d;
-            margin-top: 5px;
-            width: 100px;
-            margin: 5px auto 0;
+            margin-top: 8px;
+            width: 100%;
+            margin: 8px auto 0;
+            font-weight: 500;
         }
         
         .valuation-status {
             text-align: center;
-            font-weight: 500;
-            margin-top: 8px;
-            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
         }
         
         .valuation-low {
-            color: #27ae60;
+            background-color: rgba(39, 174, 96, 0.15);
+            color: var(--success-color);
         }
         
         .valuation-mid {
-            color: #f39c12;
+            background-color: rgba(243, 156, 18, 0.15);
+            color: var(--warning-color);
         }
         
         .valuation-high {
-            color: #e74c3c;
+            background-color: rgba(231, 76, 60, 0.15);
+            color: var(--danger-color);
         }
         
-        .modal-chart {
-            width: 100%;
-            height: 300px;
+        .tag-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: linear-gradient(to right, #e9f0ff, #d6e4ff);
+            color: var(--primary-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         
         @media (max-width: 992px) {
@@ -280,16 +349,8 @@
                 font-size: 0.85rem;
             }
             
-            .volatility-container {
-                font-size: 0.8rem;
-            }
-            
             .valuation-indicator {
-                width: 80px;
-            }
-            
-            .valuation-labels {
-                width: 80px;
+                height: 10px;
             }
         }
         
@@ -318,7 +379,14 @@
             }
             
             .chart-container {
-                width: 100px;
+                width: 120px;
+            }
+            
+            .chart-tooltip {
+                width: 260px;
+                height: 150px;
+                left: 0;
+                transform: translateX(0);
             }
         }
     </style>
@@ -327,8 +395,8 @@
     <div class="container">
         <!-- 头部 -->
         <div class="header text-center">
-            <h1><i class="fas fa-chart-line me-2"></i>可转债网格交易平台</h1>
-            <p class="mb-0">专业网格交易工具，助您实现稳定收益</p>
+            <h1><i class="fas fa-chart-network me-2"></i>网格交易平台</h1>
+            <p class="mb-0">智能网格交易工具，助您实现稳定收益</p>
         </div>
         
         <!-- 关键指标卡片 -->
@@ -363,29 +431,19 @@
             </div>
         </div>
         
-        <!-- 搜索和筛选 -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 search-container">
-                        <i class="fas fa-search"></i>
-                        <input type="text" class="form-control" id="search-input" placeholder="搜索转债名称或代码...">
-                    </div>
-                    <div class="col-md-6 d-flex align-items-center">
-                        <div class="d-flex flex-wrap">
-                            <span class="tag">低溢价率</span>
-                            <span class="tag">高波动率</span>
-                            <span class="tag">短期到期</span>
-                            <span class="tag">AAA评级</span>
-                            <span class="tag">高收益率</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- 标签分类 -->
+        <div class="tag-container">
+            <span class="tag">银行转债</span>
+            <span class="tag">高波动率</span>
+            <span class="tag">低溢价率</span>
+            <span class="tag">短期到期</span>
+            <span class="tag">AAA评级</span>
+            <span class="tag">高收益率</span>
+            <span class="tag">科技板块</span>
         </div>
         
         <!-- 数据表格 -->
-        <div class="card">
+        <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">网格交易标的列表</h5>
                 <div>
@@ -419,62 +477,79 @@
                         <h5 class="mb-0">网格交易策略说明</h5>
                     </div>
                     <div class="card-body">
-                        <p>网格交易是一种在价格波动中获取收益的交易策略，特别适合波动性较高的可转债品种。</p>
+                        <p class="lead">网格交易是一种在价格波动中获取收益的交易策略，特别适合波动性较高的投资品种。</p>
                         <div class="row mt-4">
                             <div class="col-md-6">
-                                <h6><i class="fas fa-check-circle text-success me-2"></i>策略优势</h6>
-                                <ul>
-                                    <li>机械化操作，避免情绪干扰</li>
-                                    <li>震荡行情中持续获取收益</li>
-                                    <li>无需预测市场方向</li>
-                                    <li>风险可控，收益稳定</li>
-                                </ul>
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-success p-3 rounded-circle me-3">
+                                        <i class="fas fa-lightbulb fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-2">策略优势</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle text-success me-2"></i>机械化操作，避免情绪干扰</li>
+                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle text-success me-2"></i>震荡行情中持续获取收益</li>
+                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle text-success me-2"></i>无需预测市场方向</li>
+                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle text-success me-2"></i>风险可控，收益稳定</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <h6><i class="fas fa-exclamation-triangle text-warning me-2"></i>注意事项</h6>
-                                <ul>
-                                    <li>选择高波动性标的</li>
-                                    <li>设置合理的价格区间</li>
-                                    <li>控制单网格交易金额</li>
-                                    <li>避免单边行情中的持续亏损</li>
-                                </ul>
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-warning p-3 rounded-circle me-3">
+                                        <i class="fas fa-exclamation-triangle fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-2">注意事项</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-exclamation text-warning me-2"></i>选择高波动性标的</li>
+                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-exclamation text-warning me-2"></i>设置合理的价格区间</li>
+                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-exclamation text-warning me-2"></i>控制单网格交易金额</li>
+                                            <li class="list-group-item border-0 ps-0"><i class="fas fa-exclamation text-warning me-2"></i>避免单边行情中的持续亏损</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card">
+                <div class="card h-100">
                     <div class="card-header">
                         <h5 class="mb-0">最佳网格标的特征</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-success p-2 rounded-circle me-3">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-success p-3 rounded-circle me-3">
                                 <i class="fas fa-chart-line fa-lg text-white"></i>
                             </div>
                             <div>
                                 <h6 class="mb-0">高波动性</h6>
-                                <p class="mb-0 small">月波动率 > 15%</p>
+                                <p class="mb-0">月波动率 > 15%</p>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-primary p-2 rounded-circle me-3">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-primary p-3 rounded-circle me-3">
                                 <i class="fas fa-percent fa-lg text-white"></i>
                             </div>
                             <div>
                                 <h6 class="mb-0">合理溢价率</h6>
-                                <p class="mb-0 small">溢价率 < 30%</p>
+                                <p class="mb-0">溢价率 < 30%</p>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <div class="bg-info p-2 rounded-circle me-3">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-info p-3 rounded-circle me-3">
                                 <i class="fas fa-coins fa-lg text-white"></i>
                             </div>
                             <div>
                                 <h6 class="mb-0">适中剩余规模</h6>
-                                <p class="mb-0 small">5-20亿</p>
+                                <p class="mb-0">5-20亿</p>
                             </div>
+                        </div>
+                        <div class="mt-auto text-center">
+                            <button class="btn btn-primary w-100"><i class="fas fa-plus-circle me-2"></i>创建网格策略</button>
                         </div>
                     </div>
                 </div>
@@ -485,26 +560,6 @@
         <div class="footer">
             <p class="mb-2">数据更新时间: <span id="update-time"></span></p>
             <p class="mb-0">免责声明: 本平台数据仅供参考，不构成任何投资建议。市场有风险，投资需谨慎。</p>
-        </div>
-    </div>
-
-    <!-- K线大图模态框 -->
-    <div class="modal fade" id="chartModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="chartModalTitle">K线图详情</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="chart-container">
-                        <canvas id="modalChart" class="modal-chart"></canvas>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -579,6 +634,23 @@
                 avgYield: 5.6,
                 basePrice: 120,
                 volatility: 1.8
+            },
+            {
+                id: 5,
+                name: "兴业转债",
+                code: "113052",
+                rating: "AAA",
+                dailyVol: 2.2,
+                weeklyVol: 5.8,
+                monthlyVol: 17.3,
+                yearlyVol: 33.2,
+                valuation: 60,
+                valuationStatus: "mid",
+                valuationText: "估值合理",
+                yield: 7.2,
+                avgYield: 6.8,
+                basePrice: 115,
+                volatility: 2.2
             }
         ];
 
@@ -611,7 +683,7 @@
                     datasets: [{
                         data: data,
                         borderColor: data[data.length-1] >= data[0] ? '#27ae60' : '#e74c3c',
-                        borderWidth: 1.5,
+                        borderWidth: 1.8,
                         pointRadius: 0,
                         tension: 0.4,
                         fill: false
@@ -643,7 +715,7 @@
         // 创建大尺寸K线图
         function createLargeChart(canvasId, basePrice, volatility, bondName) {
             const ctx = document.getElementById(canvasId).getContext('2d');
-            const data = generatePriceData(basePrice, volatility, 50);
+            const data = generatePriceData(basePrice, volatility, 30);
             
             // 计算图表需要的值
             const minVal = Math.min(...data);
@@ -653,12 +725,12 @@
             return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: data.map((_, i) => `T-${50-i}`),
+                    labels: data.map((_, i) => `T-${30-i}`),
                     datasets: [{
                         label: bondName + ' 价格走势',
                         data: data,
                         borderColor: data[data.length-1] >= data[0] ? '#27ae60' : '#e74c3c',
-                        borderWidth: 2,
+                        borderWidth: 3,
                         pointRadius: 0,
                         tension: 0.1,
                         fill: false
@@ -676,7 +748,10 @@
                     },
                     scales: {
                         x: {
-                            grid: { display: false }
+                            grid: { 
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
                         },
                         y: {
                             min: minVal - range * 0.1,
@@ -744,6 +819,9 @@
                     <td>
                         <div class="chart-container" data-id="${bond.id}">
                             <canvas id="chart-${bond.id}"></canvas>
+                            <div class="chart-tooltip">
+                                <canvas id="tooltip-chart-${bond.id}"></canvas>
+                            </div>
                         </div>
                     </td>
                 `;
@@ -751,7 +829,11 @@
                 
                 // 延迟渲染图表以确保canvas元素存在
                 setTimeout(() => {
+                    // 创建迷你图表
                     createMiniChart(`chart-${bond.id}`, bond.basePrice, bond.volatility);
+                    
+                    // 创建大图工具提示
+                    createLargeChart(`tooltip-chart-${bond.id}`, bond.basePrice, bond.volatility, bond.name);
                 }, 100);
             });
         }
@@ -795,22 +877,6 @@
             renderBondsTable(bondData);
         }
         
-        // 搜索功能
-        function searchBonds() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            if (!searchTerm) {
-                renderBondsTable(bondData);
-                return;
-            }
-            
-            const filtered = bondData.filter(bond => {
-                return bond.name.toLowerCase().includes(searchTerm) || 
-                       bond.code.includes(searchTerm);
-            });
-            
-            renderBondsTable(filtered);
-        }
-        
         // 更新时间
         function updateTime() {
             const now = new Date();
@@ -835,42 +901,9 @@
             document.getElementById('volatility-header').addEventListener('click', sortByVolatility);
             document.getElementById('valuation-header').addEventListener('click', sortByValuation);
             
-            // 添加搜索事件
-            document.getElementById('search-input').addEventListener('input', searchBonds);
-            
             // 更新时间
             updateTime();
             setInterval(updateTime, 1000);
-            
-            // 图表点击事件（委托）
-            document.getElementById('bonds-table-body').addEventListener('click', function(e) {
-                if (e.target.closest('.chart-container')) {
-                    const container = e.target.closest('.chart-container');
-                    const bondId = container.dataset.id;
-                    const bond = bondData.find(b => b.id == bondId);
-                    
-                    if (bond) {
-                        // 更新模态框标题
-                        document.getElementById('chartModalTitle').textContent = `${bond.name} (${bond.code}) K线图`;
-                        
-                        // 显示模态框
-                        const modal = new bootstrap.Modal(document.getElementById('chartModal'));
-                        modal.show();
-                        
-                        // 延迟创建图表以确保模态框已显示
-                        setTimeout(() => {
-                            // 清除现有图表（如果存在）
-                            const existingChart = Chart.getChart('modalChart');
-                            if (existingChart) {
-                                existingChart.destroy();
-                            }
-                            
-                            // 创建新图表
-                            createLargeChart('modalChart', bond.basePrice, bond.volatility, bond.name);
-                        }, 500);
-                    }
-                }
-            });
         });
     </script>
 </body>
