@@ -480,16 +480,16 @@
                     labels: dates,
                     datasets: [
                         // 价格走势
-                        {
-                            label: bondName + ' 价格走势',
-                            data: prices,
-                            borderColor: prices[prices.length-1] >= prices[0] ? '#27ae60' : '#e74c3c',
-                            borderWidth: 2,
-                            pointRadius: 0, // 默认不显示点
-                            pointHoverRadius: 5, // 悬停时显示点
-                            tension: 0.1,
-                            fill: false
-                        },
+						{
+							label: bondName + ' 价格走势',
+							data: prices,
+							borderColor: prices[prices.length-1] >= prices[0] ? '#27ae60' : '#e74c3c',
+							borderWidth: 2,
+							pointRadius: 0, // 默认不显示点
+							pointHoverRadius: 5, // 悬停时显示点
+							tension: 0.1,
+							fill: false
+						},
                         // 低估临界线
                         {
                             label: '低估临界线',
@@ -518,9 +518,10 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            mode: 'index',
-                            intersect: false
-                        }
+							mode: 'nearest', // 改为nearest模式
+							axis: 'x', // 沿X轴检测
+							intersect: false
+						}
                     },
                     scales: {
                         x: {
@@ -536,7 +537,12 @@
                                 color: 'rgba(0, 0, 0, 0.05)'
                             }
                         }
-                    }
+                    },
+					interaction: {
+						mode: 'index', // 交互模式为索引模式
+						axis: 'x', // 沿X轴检测
+						intersect: false // 不要求精确相交
+					}
                 }
             });
         }
