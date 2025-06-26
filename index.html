@@ -158,10 +158,7 @@
             transition: all 0.2s;
         }
         
-        .table tbody tr:hover {
-            background-color: #f8fbff;
-            transform: scale(1.005);
-        }
+        /* 已移除悬停上浮效果 */
         
         .kline-container {
             height: 200px;
@@ -498,6 +495,7 @@
                             borderWidth: 1,
                             borderDash: [5, 5],
                             pointRadius: 0,
+                            pointHoverRadius: 0, // 禁用悬停点显示
                             fill: false
                         },
                         // 高估临界线
@@ -508,6 +506,7 @@
                             borderWidth: 1,
                             borderDash: [5, 5],
                             pointRadius: 0,
+                            pointHoverRadius: 0, // 禁用悬停点显示
                             fill: false
                         }
                     ]
@@ -518,10 +517,34 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-							mode: 'nearest', // 改为nearest模式
-							axis: 'x', // 沿X轴检测
-							intersect: false
-						}
+                            mode: 'nearest',
+                            axis: 'x',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    // 只显示价格走势线的标签
+                                    if (context.datasetIndex === 0) {
+                                        return bondName + ' 价格: ' + context.parsed.y;
+                                    }
+                                    return null;
+                                },
+                                afterBody: function(context) {
+                                    return [
+                                        '低估临界线: ' + undervaluationThreshold,
+                                        '高估临界线: ' + overvaluationThreshold
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        axis: 'x',
+                        intersect: false,
+                        // 只对价格走势线启用悬停
+                        filter: function(item) {
+                            return item.datasetIndex === 0;
+                        }
                     },
                     scales: {
                         x: {
@@ -537,12 +560,7 @@
                                 color: 'rgba(0, 0, 0, 0.05)'
                             }
                         }
-                    },
-					interaction: {
-						mode: 'index', // 交互模式为索引模式
-						axis: 'x', // 沿X轴检测
-						intersect: false // 不要求精确相交
-					}
+                    }
                 }
             });
         }
