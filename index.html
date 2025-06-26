@@ -17,11 +17,12 @@
             --danger-color: #e74c3c;
             --light-bg: #f8f9fa;
             --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --grid-bg: linear-gradient(135deg, #f5f9ff 0%, #e6f0ff 100%);
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f9ff 0%, #e6f0ff 100%);
+            background: var(--grid-bg);
             color: #333;
             padding-top: 20px;
             min-height: 100vh;
@@ -321,6 +322,85 @@
             color: var(--primary-color);
         }
         
+        .fundamental {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            max-height: 80px;
+            overflow-y: auto;
+            padding: 8px;
+            background: #f8fafd;
+            border-radius: 8px;
+        }
+        
+        .liquidity-data {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .transaction-cost {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c6fbb;
+        }
+        
+        .etf-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .etf-type-broad {
+            background-color: rgba(44, 111, 187, 0.15);
+            color: var(--primary-color);
+        }
+        
+        .etf-type-sector {
+            background-color: rgba(39, 174, 96, 0.15);
+            color: var(--success-color);
+        }
+        
+        .etf-type-hk {
+            background-color: rgba(243, 156, 18, 0.15);
+            color: var(--warning-color);
+        }
+        
+        .etf-type-dividend {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: var(--danger-color);
+        }
+        
+        .etf-type-cross {
+            background-color: rgba(155, 89, 182, 0.15);
+            color: #9b59b6;
+        }
+        
+        .etf-type-stock {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: #3498db;
+        }
+        
+        .etf-type-bond {
+            background-color: rgba(26, 188, 156, 0.15);
+            color: #1abc9c;
+        }
+        
+        .etf-type-gold {
+            background-color: rgba(241, 196, 15, 0.15);
+            color: #f1c40f;
+        }
+        
+        .asset-tag {
+            font-size: 0.75rem;
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #eef5ff;
+            color: #2c6fbb;
+            margin-top: 3px;
+        }
+        
         @media (max-width: 1200px) {
             .kpi-card { margin-bottom: 15px; }
         }
@@ -338,6 +418,7 @@
             .volatility-label { width: auto; }
             .volatility-value { text-align: left; width: auto; }
             .kline-container { height: 120px; }
+            .fundamental { max-height: 60px; }
         }
     </style>
 </head>
@@ -355,42 +436,27 @@
             </div>
         </div>
         
-        <!-- 关键指标卡片区（四列） -->
+        <!-- 关键指标卡片区（三列） -->
         <div class="row mb-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card kpi-card">
                     <div class="kpi-title">平台标的数量</div>
-                    <div class="kpi-value" id="kpi-bond-count">2</div>
-                    <div><span class="positive">+0%</span> 本月新增</div>
+                    <div class="kpi-value" id="kpi-asset-count">14</div>
+                    <div><span class="positive">+12%</span> 本月新增</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card kpi-card">
-                    <div class="kpi-title">平均年化收益</div>
-                    <div class="kpi-value" id="kpi-avg-yield">--</div>
-                    <div><span class="positive">+0%</span> 较上月</div>
-                </div>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card kpi-card">
                     <div class="kpi-title">平均波动率</div>
-                    <div class="kpi-value" id="kpi-avg-vol">--</div>
-                    <div><span class="negative">0%</span> 较上月</div>
+                    <div class="kpi-value" id="kpi-avg-vol">15.2%</div>
+                    <div><span class="positive">-2.1%</span> 较上月</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card kpi-card">
-                    <div class="kpi-title">平均估值水平</div>
-                    <div class="valuation-container">
-                        <div class="valuation-value" id="avg-valuation-text">--</div>
-                        <div class="valuation-indicator" style="height:16px;">
-                            <div class="valuation-pointer" id="avg-valuation-pointer" style="left:0%"></div>
-                        </div>
-                        <div class="valuation-labels">
-                            <span>0</span><span>40</span><span>70</span><span>100</span>
-                        </div>
-                        <div class="valuation-status" id="avg-valuation-status">--</div>
-                    </div>
+                    <div class="kpi-title">低估值标的占比</div>
+                    <div class="kpi-value" id="kpi-low-valuation">64.3%</div>
+                    <div><span class="positive">+8.2%</span> 较上月</div>
                 </div>
             </div>
         </div>
@@ -398,7 +464,7 @@
         <!-- 数据表格 -->
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">网格交易标的列表</h5>
+                <h5 class="mb-0">网格交易优选标的</h5>
                 <div>
                     <button class="btn btn-sm btn-outline-primary me-2" id="export-btn"><i class="fas fa-download me-1"></i>导出数据</button>
                     <button class="btn btn-sm btn-outline-success" id="refresh-btn"><i class="fas fa-sync-alt me-1"></i>刷新数据</button>
@@ -409,13 +475,17 @@
                     <thead>
                         <tr>
                             <th>名称</th>
-                            <th id="volatility-header">波动率 <span class="sort-indicator"><i class="fas fa-sort-up" id="volatility-up"></i><i class="fas fa-sort-down" id="volatility-down"></i></span></th>
+                            <th>代码</th>
+                            <th>类型</th>
+                            <th id="volatility-header">波动性 <span class="sort-indicator"><i class="fas fa-sort-up" id="volatility-up"></i><i class="fas fa-sort-down" id="volatility-down"></i></span></th>
+                            <th>流动性</th>
+                            <th>交易成本</th>
                             <th id="valuation-header">估值水平 <span class="sort-indicator"><i class="fas fa-sort-up" id="valuation-up"></i><i class="fas fa-sort-down" id="valuation-down"></i></span></th>
-                            <th>预估年化收益</th>
+                            <th>长期基本面</th>
                             <th>日K线</th>
                         </tr>
                     </thead>
-                    <tbody id="bonds-table-body">
+                    <tbody id="assets-table-body">
                         <!-- 数据由JavaScript动态生成 -->
                     </tbody>
                 </table>
@@ -437,92 +507,295 @@
             valuation: { active: false, direction: 'asc' }
         };
         
-        // 只保留2条测试数据
-        const bondData = [
+        // 网格交易优选标的对比表数据
+        const gridData = [
             {
-                "id": 1,
-                "name": "浦发转债",
-                "code": "110059",
-                "rating": "AAA",
-                "dailyVol": 1.8,
-                "weeklyVol": 4.2,
-                "monthlyVol": 12.5,
-                "yearlyVol": 26.8,
-                "valuation": 35,
-                "valuationStatus": "low",
-                "valuationText": "估值偏低",
-                "yield": 6.8,
-                "avgYield": 5.2,
-                "basePrice": 105,
-                "volatility": 1.5,
-                "undervaluationThreshold": 104.0,
-                "overvaluationThreshold": 107.0,
-                "priceData": [
-                    {"date": "06-19", "price": 106.4},
-                    {"date": "06-20", "price": 106.9},
-                    {"date": "06-21", "price": 107.3},
-                    {"date": "06-22", "price": 107.1},
-                    {"date": "06-23", "price": 106.7},
-                    {"date": "06-24", "price": 107.0},
-                    {"date": "06-25", "price": 107.5}
-                ]
+                id: 1,
+                name: "创业板人工智能ETF",
+                code: "159363.SZ",
+                type: "行业ETF",
+                dailyVol: 2.8,
+                weeklyVol: 9.5,
+                monthlyVol: 18.7,
+                liquidityAmount: "3.2亿元",
+                liquidityTurnover: "35%",
+                transactionCost: "管理费0.15%+交易佣金万0.5",
+                valuation: 12.3,
+                valuationStatus: "low",
+                valuationText: "估值偏低",
+                fundamental: "政策强支撑（AI+行动加速），技术商业化落地加速",
+                basePrice: 1.25,
+                undervaluationThreshold: 1.18,
+                overvaluationThreshold: 1.35
             },
             {
-                "id": 2,
-                "name": "苏银转债",
-                "code": "110053",
-                "rating": "AAA",
-                "dailyVol": 2.5,
-                "weeklyVol": 6.1,
-                "monthlyVol": 18.2,
-                "yearlyVol": 34.7,
-                "valuation": 55,
-                "valuationStatus": "mid",
-                "valuationText": "估值合理",
-                "yield": 7.5,
-                "avgYield": 6.1,
-                "basePrice": 112,
-                "volatility": 2.0,
-                "undervaluationThreshold": 113.0,
-                "overvaluationThreshold": 116.0,
-                "priceData": [
-                    {"date": "06-19", "price": 115.5},
-                    {"date": "06-20", "price": 115.2},
-                    {"date": "06-21", "price": 115.8},
-                    {"date": "06-22", "price": 116.0},
-                    {"date": "06-23", "price": 115.7},
-                    {"date": "06-24", "price": 116.2},
-                    {"date": "06-25", "price": 116.5}
-                ]
+                id: 2,
+                name: "恒生医药ETF",
+                code: "513060.SH",
+                type: "行业ETF",
+                dailyVol: 1.9,
+                weeklyVol: 8.1,
+                monthlyVol: 15.2,
+                liquidityAmount: "1.8亿元",
+                liquidityTurnover: "28%",
+                transactionCost: "管理费0.25%+交易佣金万0.5",
+                valuation: 8.7,
+                valuationStatus: "low",
+                valuationText: "估值偏低",
+                fundamental: "创新药审批提速（2024年批准48种1类新药），老龄化需求刚性",
+                basePrice: 1.42,
+                undervaluationThreshold: 1.35,
+                overvaluationThreshold: 1.52
+            },
+            {
+                id: 3,
+                name: "中概互联ETF",
+                code: "159605.SZ",
+                type: "港股ETF",
+                dailyVol: 3.5,
+                weeklyVol: 12.8,
+                monthlyVol: 22.5,
+                liquidityAmount: "5.1亿元",
+                liquidityTurnover: "42%",
+                transactionCost: "管理费0.25%+交易佣金万0.5",
+                valuation: 8.6,
+                valuationStatus: "low",
+                valuationText: "估值偏低",
+                fundamental: "监管转向'反内卷'，生成式AI商业化落地（电商/游戏场景）",
+                basePrice: 0.98,
+                undervaluationThreshold: 0.92,
+                overvaluationThreshold: 1.08
+            },
+            {
+                id: 4,
+                name: "恒生互联网ETF",
+                code: "513330.SH",
+                type: "港股ETF",
+                dailyVol: 4.2,
+                weeklyVol: 15.3,
+                monthlyVol: 25.3,
+                liquidityAmount: "2.9亿元",
+                liquidityTurnover: "38%",
+                transactionCost: "管理费0.25%+交易佣金万0.5",
+                valuation: 15.2,
+                valuationStatus: "low",
+                valuationText: "估值偏低",
+                fundamental: "港股科技股回流（'科企专线'开通），成分股集中度87%",
+                basePrice: 0.85,
+                undervaluationThreshold: 0.78,
+                overvaluationThreshold: 0.95
+            },
+            {
+                id: 5,
+                name: "沪深300ETF",
+                code: "510300.SH",
+                type: "宽基ETF",
+                dailyVol: 1.2,
+                weeklyVol: 4.2,
+                monthlyVol: 9.5,
+                liquidityAmount: "22.6亿元",
+                liquidityTurnover: "18%",
+                transactionCost: "管理费0.15%+交易佣金万0.5",
+                valuation: 41.5,
+                valuationStatus: "mid",
+                valuationText: "估值合理",
+                fundamental: "经济复苏核心载体，但增长动能温和",
+                basePrice: 3.65,
+                undervaluationThreshold: 3.52,
+                overvaluationThreshold: 3.82
+            },
+            {
+                id: 6,
+                name: "港股红利低波ETF",
+                code: "513090.SH",
+                type: "红利ETF",
+                dailyVol: 0.9,
+                weeklyVol: 3.5,
+                monthlyVol: 11.8,
+                liquidityAmount: "0.9亿元",
+                liquidityTurnover: "15%",
+                transactionCost: "管理费0.25%+交易佣金万0.5",
+                valuation: 91.2,
+                valuationStatus: "high",
+                valuationText: "估值偏高",
+                fundamental: "股息率7.4%+分红机制优化，抗周期性强",
+                basePrice: 1.18,
+                undervaluationThreshold: 1.12,
+                overvaluationThreshold: 1.25
+            },
+            {
+                id: 7,
+                name: "医疗ETF易方达",
+                code: "512010.SH",
+                type: "行业ETF",
+                dailyVol: 1.5,
+                weeklyVol: 6.2,
+                monthlyVol: 13.6,
+                liquidityAmount: "2.1亿元",
+                liquidityTurnover: "25%",
+                transactionCost: "管理费0.15%+交易佣金万0.5",
+                valuation: 6.3,
+                valuationStatus: "low",
+                valuationText: "估值偏低",
+                fundamental: "集采政策优化+AI缩短研发周期，份额逆势增长",
+                basePrice: 0.92,
+                undervaluationThreshold: 0.86,
+                overvaluationThreshold: 1.02
+            },
+            {
+                id: 8,
+                name: "军工ETF",
+                code: "512660.SH",
+                type: "行业ETF",
+                dailyVol: 2.3,
+                weeklyVol: 9.1,
+                monthlyVol: 17.9,
+                liquidityAmount: "1.5亿元",
+                liquidityTurnover: "22%",
+                transactionCost: "管理费0.15%+交易佣金万0.5",
+                valuation: 18.4,
+                valuationStatus: "low",
+                valuationText: "估值偏低",
+                fundamental: "低空经济写入政府工作报告，C919量产+歼-35亮相",
+                basePrice: 1.15,
+                undervaluationThreshold: 1.08,
+                overvaluationThreshold: 1.25
+            },
+            {
+                id: 9,
+                name: "纳斯达克100ETF",
+                code: "159941.SZ",
+                type: "跨境ETF",
+                dailyVol: 2.1,
+                weeklyVol: 7.8,
+                monthlyVol: 14.8,
+                liquidityAmount: "0.7亿元",
+                liquidityTurnover: "12%",
+                transactionCost: "管理费0.30%+交易佣金万0.5",
+                valuation: 89.7,
+                valuationStatus: "high",
+                valuationText: "估值偏高",
+                fundamental: "全球科技龙头主导AI革命，但估值溢价明显",
+                basePrice: 5.82,
+                undervaluationThreshold: 5.65,
+                overvaluationThreshold: 6.15
+            },
+            {
+                id: 10,
+                name: "五粮液",
+                code: "000858.SZ",
+                type: "消费个股",
+                dailyVol: 1.8,
+                weeklyVol: 5.8,
+                monthlyVol: 12.3,
+                liquidityAmount: "18.5亿元",
+                liquidityTurnover: "1.1%",
+                transactionCost: "印花税0.1%+佣金万2.5",
+                valuation: 38.2,
+                valuationStatus: "mid",
+                valuationText: "估值合理",
+                fundamental: "高端白酒渠道改革，2025年预测营收增速8.5%",
+                basePrice: 152.8,
+                undervaluationThreshold: 145.0,
+                overvaluationThreshold: 165.0
+            },
+            {
+                id: 11,
+                name: "中国平安",
+                code: "601318.SH",
+                type: "金融个股",
+                dailyVol: 1.3,
+                weeklyVol: 4.5,
+                monthlyVol: 10.7,
+                liquidityAmount: "32.1亿元",
+                liquidityTurnover: "0.8%",
+                transactionCost: "印花税0.1%+佣金万2.5",
+                valuation: 7.3,
+                valuationStatus: "low",
+                valuationText: "估值偏低",
+                fundamental: "OPM（营运利润）增速9%，寿险改革见效",
+                basePrice: 48.2,
+                undervaluationThreshold: 45.5,
+                overvaluationThreshold: 52.0
+            },
+            {
+                id: 12,
+                name: "美的集团",
+                code: "000333.SZ",
+                type: "制造个股",
+                dailyVol: 1.4,
+                weeklyVol: 5.2,
+                monthlyVol: 11.5,
+                liquidityAmount: "12.7亿元",
+                liquidityTurnover: "0.9%",
+                transactionCost: "印花税0.1%+佣金万2.5",
+                valuation: 28.6,
+                valuationStatus: "mid",
+                valuationText: "估值合理",
+                fundamental: "全球化布局+智慧家居领先，但出口承压（美国关税）",
+                basePrice: 68.5,
+                undervaluationThreshold: 64.8,
+                overvaluationThreshold: 72.5
+            },
+            {
+                id: 13,
+                name: "美锦转债",
+                code: "127061.SZ",
+                type: "可转债",
+                dailyVol: 0.8,
+                weeklyVol: 3.2,
+                monthlyVol: 8.2,
+                liquidityAmount: "0.3亿元",
+                liquidityTurnover: "5%",
+                transactionCost: "佣金万2（无印花税）",
+                valuation: 2.1,
+                valuationStatus: "low",
+                valuationText: "估值偏低",
+                fundamental: "2026年到期，溢价率3.8%，正股为氢能源龙头",
+                basePrice: 112.5,
+                undervaluationThreshold: 110.0,
+                overvaluationThreshold: 115.0
+            },
+            {
+                id: 14,
+                name: "京东金融积存金",
+                code: "-",
+                type: "黄金积存",
+                dailyVol: 0.6,
+                weeklyVol: 2.5,
+                monthlyVol: 6.5,
+                liquidityAmount: "场外申赎",
+                liquidityTurnover: "T+1到账",
+                transactionCost: "申购费0.12%+赎回费0.05%",
+                valuation: null,
+                valuationStatus: "mid",
+                valuationText: "无估值",
+                fundamental: "挂钩伦敦金价，避险属性强",
+                basePrice: 485.2,
+                undervaluationThreshold: 475.0,
+                overvaluationThreshold: 500.0
             }
         ];
-        
-        // 计算平均年化收益、平均波动率、平均估值水平
-        function updateKpiCards() {
-            const count = bondData.length;
-            let avgYield = 0, avgVol = 0, avgVal = 0;
-            if (count > 0) {
-                avgYield = bondData.reduce((a, b) => a + b.yield, 0) / count;
-                avgVol = bondData.reduce((a, b) => a + b.monthlyVol, 0) / count;
-                avgVal = bondData.reduce((a, b) => a + b.valuation, 0) / count;
+
+        // 获取类型对应的CSS类
+        function getTypeClass(type) {
+            switch(type) {
+                case "宽基ETF": return "etf-type-broad";
+                case "行业ETF": return "etf-type-sector";
+                case "港股ETF": return "etf-type-hk";
+                case "红利ETF": return "etf-type-dividend";
+                case "跨境ETF": return "etf-type-cross";
+                case "消费个股": return "etf-type-stock";
+                case "金融个股": return "etf-type-stock";
+                case "制造个股": return "etf-type-stock";
+                case "可转债": return "etf-type-bond";
+                case "黄金积存": return "etf-type-gold";
+                default: return "";
             }
-            document.getElementById('kpi-bond-count').textContent = count;
-            document.getElementById('kpi-avg-yield').textContent = avgYield.toFixed(2) + '%';
-            document.getElementById('kpi-avg-vol').textContent = avgVol.toFixed(2) + '%';
-            // 平均估值水平卡片
-            document.getElementById('avg-valuation-text').textContent = '均值: ' + avgVal.toFixed(2);
-            document.getElementById('avg-valuation-pointer').style.left = avgVal.toFixed(2) + '%';
-            let status = '', statusClass = '';
-            if (avgVal < 40) { status = '估值偏低'; statusClass = 'valuation-low'; }
-            else if (avgVal < 70) { status = '估值合理'; statusClass = 'valuation-mid'; }
-            else { status = '估值偏高'; statusClass = 'valuation-high'; }
-            const statusDiv = document.getElementById('avg-valuation-status');
-            statusDiv.textContent = status;
-            statusDiv.className = 'valuation-status ' + statusClass;
         }
-        
+
         // 创建K线图
-        function createKlineChart(canvasId, priceData, bondName, undervaluationThreshold, overvaluationThreshold) {
+        function createKlineChart(canvasId, priceData, assetName, undervaluationThreshold, overvaluationThreshold) {
             const ctx = document.getElementById(canvasId).getContext('2d');
             const prices = priceData.map(item => item.price);
             const dates = priceData.map(item => item.date);
@@ -535,7 +808,7 @@
                     labels: dates,
                     datasets: [
                         {
-                            label: bondName + ' 价格走势',
+                            label: assetName + ' 价格走势',
                             data: prices,
                             borderColor: prices[prices.length-1] >= prices[0] ? '#27ae60' : '#e74c3c',
                             borderWidth: 2,
@@ -581,7 +854,7 @@
                             callbacks: {
                                 label: function(context) {
                                     if (context.datasetIndex === 0) {
-                                        return bondName + ' 价格: ' + context.parsed.y.toFixed(2);
+                                        return assetName + ' 价格: ' + context.parsed.y.toFixed(2);
                                     }
                                     return null;
                                 }
@@ -647,70 +920,112 @@
             document.getElementById('valuation-down').classList.toggle('active', sortState.valuation.active && sortState.valuation.direction === 'desc');
         }
         
-        // 渲染债券表格
-        function renderBondsTable(data) {
-            const tbody = document.getElementById('bonds-table-body');
+        // 渲染资产表格
+        function renderAssetsTable(data) {
+            const tbody = document.getElementById('assets-table-body');
             tbody.innerHTML = '';
-            data.forEach(bond => {
+            data.forEach(asset => {
+                // 生成模拟价格数据
+                const priceData = generatePriceData(asset.basePrice, asset.monthlyVol, asset.undervaluationThreshold, asset.overvaluationThreshold);
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>
-                        <div class="fw-bold">${bond.name}</div>
-                        <div class="text-muted small">${bond.code} | ${bond.rating}</div>
+                        <div class="fw-bold">${asset.name}</div>
+                        <div class="text-muted small">${asset.code}</div>
+                    </td>
+                    <td>
+                        <div class="fw-bold">${asset.code}</div>
+                    </td>
+                    <td>
+                        <div class="${getTypeClass(asset.type)} etf-type">${asset.type}</div>
+                        <div class="asset-tag">${asset.type.includes('ETF') ? 'ETF' : asset.type.includes('个股') ? '股票' : asset.type.includes('转债') ? '债券' : '其他'}</div>
                     </td>
                     <td>
                         <div class="volatility-container">
                             <div class="volatility-item">
-                                <span class="volatility-label">日波动率:</span>
-                                <span class="volatility-value ${bond.dailyVol < 2 ? 'positive' : bond.dailyVol > 3 ? 'negative' : ''}">${bond.dailyVol.toFixed(2)}%</span>
+                                <span class="volatility-label">近1日:</span>
+                                <span class="volatility-value ${asset.dailyVol < 2 ? 'positive' : asset.dailyVol > 3 ? 'negative' : ''}">${asset.dailyVol.toFixed(1)}%</span>
                             </div>
                             <div class="volatility-item">
-                                <span class="volatility-label">周波动率:</span>
-                                <span class="volatility-value ${bond.weeklyVol < 4 ? 'positive' : bond.weeklyVol > 7 ? 'negative' : ''}">${bond.weeklyVol.toFixed(2)}%</span>
+                                <span class="volatility-label">近7日:</span>
+                                <span class="volatility-value ${asset.weeklyVol < 4 ? 'positive' : asset.weeklyVol > 7 ? 'negative' : ''}">${asset.weeklyVol.toFixed(1)}%</span>
                             </div>
                             <div class="volatility-item">
-                                <span class="volatility-label">月波动率:</span>
-                                <span class="volatility-value ${bond.monthlyVol < 15 ? 'positive' : bond.monthlyVol > 20 ? 'negative' : ''}">${bond.monthlyVol.toFixed(2)}%</span>
-                            </div>
-                            <div class="volatility-item">
-                                <span class="volatility-label">年波动率:</span>
-                                <span class="volatility-value ${bond.yearlyVol < 30 ? 'positive' : bond.yearlyVol > 40 ? 'negative' : ''}">${bond.yearlyVol.toFixed(2)}%</span>
+                                <span class="volatility-label">近30日:</span>
+                                <span class="volatility-value ${asset.monthlyVol < 15 ? 'positive' : asset.monthlyVol > 20 ? 'negative' : ''}">${asset.monthlyVol.toFixed(1)}%</span>
                             </div>
                         </div>
                     </td>
                     <td>
+                        <div class="liquidity-data">
+                            <div>${asset.liquidityAmount}</div>
+                            <div class="small text-muted">换手率: ${asset.liquidityTurnover}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="transaction-cost">${asset.transactionCost}</div>
+                    </td>
+                    <td>
                         <div class="valuation-container">
-                            <div class="valuation-value">当前估值: ${bond.valuation.toFixed(2)}</div>
+                            <div class="valuation-value">${asset.valuation ? asset.valuation.toFixed(1) + (asset.type.includes('ETF') ? '%分位' : '倍') : '--'}</div>
                             <div class="valuation-indicator">
-                                <div class="valuation-pointer" style="left: ${bond.valuation.toFixed(2)}%;"></div>
+                                <div class="valuation-pointer" style="left: ${asset.valuation ? Math.min(asset.valuation, 100) : 50}%;"></div>
                             </div>
                             <div class="valuation-labels">
                                 <span>0</span><span>40</span><span>70</span><span>100</span>
                             </div>
-                            <div class="valuation-status valuation-${bond.valuationStatus}">${bond.valuationText}</div>
+                            <div class="valuation-status valuation-${asset.valuationStatus}">${asset.valuationText}</div>
                         </div>
                     </td>
                     <td>
-                        <div class="fw-bold positive">${bond.yield.toFixed(2)}%</div>
-                        <div class="small text-muted">历史平均: ${bond.avgYield.toFixed(2)}%</div>
+                        <div class="fundamental">${asset.fundamental}</div>
                     </td>
                     <td>
                         <div class="kline-container">
-                            <canvas id="kline-${bond.id}"></canvas>
+                            <canvas id="kline-${asset.id}"></canvas>
                         </div>
                     </td>
                 `;
                 tbody.appendChild(row);
                 setTimeout(() => {
                     createKlineChart(
-                        `kline-${bond.id}`,
-                        bond.priceData,
-                        bond.name,
-                        bond.undervaluationThreshold,
-                        bond.overvaluationThreshold
+                        `kline-${asset.id}`,
+                        priceData,
+                        asset.name,
+                        asset.undervaluationThreshold,
+                        asset.overvaluationThreshold
                     );
                 }, 100);
             });
+        }
+        
+        // 生成模拟价格数据
+        function generatePriceData(basePrice, volatility, minPrice, maxPrice) {
+            const priceData = [];
+            const today = new Date();
+            
+            // 生成过去7天的数据
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(today.getDate() - i);
+                const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+                
+                // 模拟价格波动
+                const volatilityFactor = volatility / 100;
+                const randomChange = (Math.random() * volatilityFactor * 2) - volatilityFactor;
+                const newPrice = basePrice * (1 + randomChange);
+                
+                // 确保价格在合理范围内
+                const boundedPrice = Math.max(minPrice, Math.min(maxPrice, newPrice));
+                
+                priceData.push({
+                    date: dateStr,
+                    price: boundedPrice
+                });
+            }
+            
+            return priceData;
         }
         
         // 排序功能
@@ -724,8 +1039,8 @@
             sortState.valuation.active = false;
             updateSortIndicators();
             const direction = sortState.volatility.direction === 'asc' ? 1 : -1;
-            bondData.sort((a, b) => (a.monthlyVol - b.monthlyVol) * direction);
-            renderBondsTable(bondData);
+            gridData.sort((a, b) => (a.monthlyVol - b.monthlyVol) * direction);
+            renderAssetsTable(gridData);
         }
         
         function sortByValuation() {
@@ -738,13 +1053,18 @@
             sortState.volatility.active = false;
             updateSortIndicators();
             const direction = sortState.valuation.direction === 'asc' ? 1 : -1;
-            bondData.sort((a, b) => (a.valuation - b.valuation) * direction);
-            renderBondsTable(bondData);
+            gridData.sort((a, b) => {
+                // 处理京东金融积存金这种没有估值的情况
+                const valA = a.valuation !== null ? a.valuation : -1;
+                const valB = b.valuation !== null ? b.valuation : -1;
+                return (valA - valB) * direction;
+            });
+            renderAssetsTable(gridData);
         }
         
         // 导出数据功能
         function exportData() {
-            const dataStr = JSON.stringify(bondData, null, 2);
+            const dataStr = JSON.stringify(gridData, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const now = new Date();
@@ -767,13 +1087,11 @@
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            renderBondsTable(bondData);
-            updateKpiCards();
+            renderAssetsTable(gridData);
             document.getElementById('volatility-header').addEventListener('click', sortByVolatility);
             document.getElementById('valuation-header').addEventListener('click', sortByValuation);
             document.getElementById('refresh-btn').addEventListener('click', function() {
-                renderBondsTable(bondData);
-                updateKpiCards();
+                renderAssetsTable(gridData);
                 updateTime();
             });
             document.getElementById('export-btn').addEventListener('click', exportData);
